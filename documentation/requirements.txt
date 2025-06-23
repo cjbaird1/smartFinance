@@ -1,0 +1,34 @@
+# These are the libraries and modules that need to be installed for our backend server
+flask
+flask-cors
+yfinance
+pandas
+scikit-learn
+requests
+python-dotenv
+tensorflow
+transformers
+newsapi-python
+tvdatafeed
+vaderSentiment
+
+# ^ These have already been installed
+
+# This is the code to install them: "pip install -r requirements.txt"
+
+# Here are the libraries and why we need them: 
+
+# PACKAGE               WHY WE NEED IT 
+# flask                Backend server to handle API requests from React
+# flask-cors           Allow cross-origin requests (React frontend to Flask backend)
+# yfinance             Get stock/ETF data
+# pandas               Data handling and processing
+# scikit-learn         Any machine learning models you want to add later
+# requests             Fetch news or additional data via APIs
+# python-dotenv        Load secret keys and API tokens from a .env file securely
+# tensorflow           Deep learning framework for our sentiment analysis model
+# transformers         Pre-trained BERT model for sentiment analysis
+# newsapi-python       News API client for fetching financial news
+# tvdatafeed           Fetch historical stock data from TradingView
+# vaderSentiment       Lightweight sentiment analysis for news articles
+

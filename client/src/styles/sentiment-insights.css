@@ -1,0 +1,98 @@
+/* Import common styles */
+@import './sentiment-common.css';
+
+/* Insights-specific styles */
+.sentiment-insights-container {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  margin-bottom: 24px;
+}
+
+.empty-state {
+  color: #666;
+}
+
+.sentiment-insights-container h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.sentiment-summary-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 150px;
+  flex: 1;
+}
+
+.summary-card .card-label {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.summary-card .sentiment-badge {
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.summary-card .trend-indicator {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.sentiment-distribution-counts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.distribution-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.distribution-item:last-child {
+  border-bottom: none;
+}
+
+.distribution-item .count {
+  font-weight: bold;
+}
+
+/* Sentiment colors (reusing from NewsItem/SentimentAnalysis) */
+.sentiment-badge.positive,
+.distribution-item.positive .count {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.sentiment-badge.negative,
+.distribution-item.negative .count {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+.sentiment-badge.neutral,
+.distribution-item.neutral .count {
+  background-color: #e0e0e0;
+  color: #757575;
+} 

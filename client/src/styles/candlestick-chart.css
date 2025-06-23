@@ -1,0 +1,30 @@
+.js-plotly-plot .modebar {
+  justify-content: flex-end !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  padding: 0 24px !important;
+  position: absolute !important;
+  top: -44px !important;
+  right: 24px !important;
+  left: auto !important;
+  margin: 0;
+  background: rgba(255,255,255,0.85) !important;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  z-index: 10;
+}
+
+.js-plotly-plot .modebar-btn {
+  font-size: 28px !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin: 0 8px !important;
+  filter: none !important;
+}
+
+.js-plotly-plot .modebar-btn > svg {
+  width: 32px !important;
+  height: 32px !important;
+  fill: #222 !important;
+  opacity: 1 !important;
+} 

@@ -1,0 +1,135 @@
+.search-page {
+  background: #f4f6fa;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.search-page h2 {
+  margin-bottom: 24px;
+}
+
+.search-form {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  background: #ede7f6;
+  padding: 18px 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+
+.search-input {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 240px;
+  background: #fff;
+}
+
+.timeframe-select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.nbars-input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.nbars-input {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 240px;
+  background: #fff;
+}
+
+.nbars-input.error {
+  border: 2px solid #ef5350;
+  outline: 2px solid #ef5350;
+  color: #ef5350;
+}
+
+.error-message {
+  color: #ef5350;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.search-button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.08);
+  transition: background 0.2s;
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.chart-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 8px;
+  box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+  height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-header {
+  margin-bottom: 16px;
+}
+
+.after-hours-button {
+  align-self: flex-start;
+  margin-bottom: 16px;
+  padding: 8px 18px;
+  font-size: 15px;
+  border-radius: 6px;
+  background: #ede7f6;
+  color: #222;
+  border: 1px solid #bdbdbd;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(44,62,80,0.04);
+  transition: background 0.2s;
+}
+
+.after-hours-button.active {
+  background: #e3f0fb;
+}
+
+.indicator-education-link {
+  margin: -8px 0 16px 4px;
+  font-size: 14px;
+}
+
+.indicator-education-link a {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.indicator-education-link a:hover {
+  text-decoration: underline;
+}
+
+.chart-wrapper {
+  flex: 1;
+  width: 100%;
+} 

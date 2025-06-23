@@ -1,0 +1,76 @@
+/* Import common styles */
+@import './sentiment-common.css';
+
+/* Analysis-specific styles */
+.sentiment-section {
+  margin-bottom: 24px;
+}
+
+.sentiment-section h4 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.sentiment-card {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.sentiment-overall {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sentiment-badge {
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sentiment-score {
+  font-size: 14px;
+  color: #666;
+}
+
+.sentiment-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.breakdown-card {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.breakdown-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.breakdown-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.sentiment-positive {
+  background: #4caf50;
+}
+
+.sentiment-negative {
+  background: #f44336;
+}
+
+.sentiment-neutral {
+  background: #9e9e9e;
+} 
