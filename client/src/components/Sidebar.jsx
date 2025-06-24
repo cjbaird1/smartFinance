@@ -14,12 +14,28 @@ const Sidebar = () => {
       >
         <span role="img" aria-label="search">🔍</span> Search Ticker
       </NavLink>
+      
+      <NavLink 
+        to="/trade-simulator" 
+        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+      >
+        <span role="img" aria-label="trade simulator">🧪</span> Trade Simulator
+      </NavLink>
+        
+      <NavLink 
+        to="/news" 
+        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+      >
+        <span role="img" aria-label="news">📰</span> News & Sentiment
+      </NavLink>
+
       <NavLink 
         to="/charts" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
       >
         <span role="img" aria-label="charts">📈</span> Technical Charts
       </NavLink>
+
       <NavLink 
         to="/predictions" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
@@ -32,12 +48,7 @@ const Sidebar = () => {
       >
         <span role="img" aria-label="strategy">⚙️</span> Strategy Tester
       </NavLink>
-      <NavLink 
-        to="/news" 
-        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-      >
-        <span role="img" aria-label="news">📰</span> News & Sentiment
-      </NavLink>
+      
       <NavLink 
         to="/education" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
@@ -50,6 +61,7 @@ const Sidebar = () => {
       >
         <span role="img" aria-label="alerts">🔔</span> Alerts
       </NavLink>
+      
     </div>
   );
 };

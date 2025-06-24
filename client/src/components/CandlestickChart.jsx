@@ -4,7 +4,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import '../styles/candlestick-chart.css';
 
-function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
+function CandlestickChart({ data, highlightAfterHours, indicators = [], smaPeriod = 20, emaPeriod = 20 }) {
   if (!data || data.length === 0) return <div>No data to display.</div>;
 
   // Prepare data for Plotly
@@ -17,6 +17,23 @@ function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
   // Calculate min and max date for xaxis range
   const minDate = dates.length > 0 ? dates[0] : undefined;
   const maxDate = dates.length > 0 ? dates[dates.length - 1] : undefined;
+
+  // Calculate min and max for y-axis with padding
+  const minY = Math.min(...low);
+  const maxY = Math.max(...high);
+  const yPadding = (maxY - minY) * 0.05; // 5% padding
+  const paddedMinY = minY - yPadding;
+  const paddedMaxY = maxY + yPadding;
+
+  // Calculate x-axis padding for candlesticks
+  const minDateObj = dates.length > 0 ? new Date(dates[0]) : undefined;
+  const maxDateObj = dates.length > 0 ? new Date(dates[dates.length - 1]) : undefined;
+  let xPaddingMs = 0;
+  if (dates.length > 1) {
+    xPaddingMs = (new Date(dates[1]) - new Date(dates[0])) * 0.7; // 70% of bar width
+  }
+  const paddedMinDate = minDateObj ? new Date(minDateObj.getTime() - xPaddingMs) : minDateObj;
+  const paddedMaxDate = maxDateObj ? new Date(maxDateObj.getTime() + xPaddingMs) : maxDateObj;
 
   // --- Indicator Calculations ---
   function calculateSMA(values, window) {
@@ -82,10 +99,10 @@ function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
   if (indicators.includes('sma20')) {
     indicatorTraces.push({
       x: dates,
-      y: calculateSMA(close, 20),
+      y: calculateSMA(close, smaPeriod),
       type: 'scatter',
       mode: 'lines',
-      name: 'SMA 20',
+      name: `SMA ${smaPeriod}`,
       line: { color: 'orange', width: 2 },
       hoverinfo: 'skip',
       yaxis: 'y',
@@ -94,10 +111,10 @@ function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
   if (indicators.includes('ema20')) {
     indicatorTraces.push({
       x: dates,
-      y: calculateEMA(close, 20),
+      y: calculateEMA(close, emaPeriod),
       type: 'scatter',
       mode: 'lines',
-      name: 'EMA 20',
+      name: `EMA ${emaPeriod}`,
       line: { color: 'purple', width: 2, dash: 'dot' },
       hoverinfo: 'skip',
       yaxis: 'y',
@@ -180,12 +197,12 @@ function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
       linecolor: '#222',
       linewidth: 2,
       mirror: true,
-      range: minDate && maxDate ? [minDate, maxDate] : undefined,
+      range: paddedMinDate && paddedMaxDate ? [paddedMinDate.toISOString(), paddedMaxDate.toISOString()] : undefined,
       domain: [0, 1],
       anchor: 'y',
     },
     yaxis: {
-      autorange: true,
+      autorange: false,
       fixedrange: false,
       tickprefix: '$',
       showline: true,
@@ -194,6 +211,7 @@ function CandlestickChart({ data, highlightAfterHours, indicators = [] }) {
       mirror: true,
       domain: [hasRSI && hasMACD ? 0.4 : hasRSI || hasMACD ? 0.3 : 0, 1],
       title: '',
+      range: [paddedMinY, paddedMaxY],
     },
     plot_bgcolor: '#fff',
     paper_bgcolor: '#fff',

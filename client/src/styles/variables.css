@@ -1,0 +1,12 @@
+:root {
+  --bg-main: #181A20;
+  --bg-panel: #23262F;
+  --bg-sidebar: #1C1E24;
+  --border: #282B33;
+  --text-main: #F4F4F4;
+  --text-muted: #A0A4AE;
+  --accent: #2563eb;
+  --accent-hover: #1e40af;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.18);
+} 

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import CandlestickChart from "../components/CandlestickChart";
+import LineChart from "../components/LineChart";
 import Button from "../components/Button";
+import Tooltip from "../components/Tooltip";
 import "../styles/search-page.css";
 
 const TIMEFRAMES = [
@@ -34,6 +36,14 @@ const SearchPage = () => {
   const [loading, setLoading] = useState(false);
   const [highlightAfterHours, setHighlightAfterHours] = useState(false);
   const [selectedIndicators, setSelectedIndicators] = useState([]);
+  const [chartType, setChartType] = useState("candlestick");
+  const [showControlsPanel, setShowControlsPanel] = useState(false);
+  const [smaPeriod, setSmaPeriod] = useState(20);
+  const [emaPeriod, setEmaPeriod] = useState(20);
+  const [editingSma, setEditingSma] = useState(false);
+  const [editingEma, setEditingEma] = useState(false);
+  const [smaInput, setSmaInput] = useState(smaPeriod);
+  const [emaInput, setEmaInput] = useState(emaPeriod);
 
   const fetchStockData = async (e) => {
     e.preventDefault();
@@ -131,51 +141,229 @@ const SearchPage = () => {
         </div>
       )}
       {stockData && stockData.data && stockData.data.length > 0 && (
-        <div className="chart-container">
-          <h3 className="chart-header">
+        <div className="chart-container" style={{ position: 'relative' }}>
+          {/* Floating Controls Button - now above the title */}
+          <button
+            className="floating-controls-btn"
+            onClick={() => setShowControlsPanel((v) => !v)}
+            style={{ position: 'absolute', top: 18, left: 18, zIndex: 20 }}
+            aria-label="Show chart controls"
+          >
+            &#9881;
+          </button>
+          <h3 className="chart-header" style={{ marginLeft: 60 }}>
             {stockData.ticker} - Last {stockData.data.length} Bars
           </h3>
+          {/* Collapsible Controls Panel */}
+          {showControlsPanel && (
+            <div className="floating-controls-panel" style={{ position: 'absolute', top: 60, left: 18, zIndex: 30, background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(44,62,80,0.18)', padding: 24, minWidth: 220, maxWidth: 320 }}>
+              <button
+                style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }}
+                onClick={() => setShowControlsPanel(false)}
+                aria-label="Close controls panel"
+              >
+                ×
+              </button>
+              <div className="chart-type-selector" style={{ marginBottom: 16 }}>
+                <button
+                  className={chartType === "candlestick" ? "active" : ""}
+                  onClick={() => setChartType("candlestick")}
+                >
+                  Candlestick
+                </button>
+                <button
+                  className={chartType === "line" ? "active" : ""}
+                  onClick={() => setChartType("line")}
+                >
+                  Line
+                </button>
+              </div>
           <button
             onClick={() => setHighlightAfterHours((v) => !v)}
             className={`after-hours-button ${highlightAfterHours ? 'active' : ''}`}
+                style={{ margin: '16px 0' }}
           >
             {highlightAfterHours ? "Hide After Hours" : "Highlight After Hours"}
           </button>
-          {/* Indicator Selector UI */}
-          <div className="indicator-selector" style={{ display: 'flex', gap: 12, margin: '16px 0' }}>
-            {INDICATORS.map(ind => (
+              <div className="indicator-selector" style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '16px 0' }}>
+                {/* SMA Button with editable period */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    className={`indicator-btn${selectedIndicators.includes('sma20') ? ' active' : ''}`}
+                    style={{
+                      padding: '6px 18px',
+                      borderRadius: 6,
+                      border: '1px solid #aaa',
+                      background: selectedIndicators.includes('sma20') ? '#1976d2' : '#f4f4f4',
+                      color: selectedIndicators.includes('sma20') ? '#fff' : '#222',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onClick={() => setSelectedIndicators(prev =>
+                      prev.includes('sma20')
+                        ? prev.filter(v => v !== 'sma20')
+                        : [...prev, 'sma20']
+                    )}
+                  >
+                    {`SMA ${smaPeriod}`}
+                  </button>
+                  <Tooltip content="Edit the period for this indicator.">
+                    <span
+                      style={{ cursor: 'pointer', color: '#888', fontSize: 16 }}
+                      onClick={() => { setEditingSma(true); setSmaInput(smaPeriod); }}
+                    >&#9881;</span>
+                  </Tooltip>
+                  {editingSma && (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 4 }}>
+                      <input
+                        type="number"
+                        min={2}
+                        max={200}
+                        value={smaInput}
+                        onChange={e => setSmaInput(e.target.value.replace(/[^0-9]/g, ''))}
+                        style={{ width: 48, fontSize: 14, padding: '2px 6px', borderRadius: 4, border: '1px solid #aaa' }}
+                      />
+                      <button
+                        style={{ marginLeft: 2, fontSize: 16, cursor: 'pointer', background: 'none', border: 'none', color: '#1976d2' }}
+                        onClick={() => {
+                          const val = parseInt(smaInput, 10);
+                          if (!isNaN(val) && val >= 2 && val <= 200) {
+                            setSmaPeriod(val);
+                            setEditingSma(false);
+                          }
+                        }}
+                        title="Confirm SMA period"
+                      >✔️</button>
+                      <button
+                        style={{ marginLeft: 2, fontSize: 16, cursor: 'pointer', background: 'none', border: 'none', color: '#ef5350' }}
+                        onClick={() => setEditingSma(false)}
+                        title="Cancel"
+                      >✖️</button>
+                    </span>
+                  )}
+                </div>
+                {/* EMA Button with editable period */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    className={`indicator-btn${selectedIndicators.includes('ema20') ? ' active' : ''}`}
+                    style={{
+                      padding: '6px 18px',
+                      borderRadius: 6,
+                      border: '1px solid #aaa',
+                      background: selectedIndicators.includes('ema20') ? '#1976d2' : '#f4f4f4',
+                      color: selectedIndicators.includes('ema20') ? '#fff' : '#222',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onClick={() => setSelectedIndicators(prev =>
+                      prev.includes('ema20')
+                        ? prev.filter(v => v !== 'ema20')
+                        : [...prev, 'ema20']
+                    )}
+                  >
+                    {`EMA ${emaPeriod}`}
+                  </button>
+                  <Tooltip content="Edit the period for this indicator.">
+                    <span
+                      style={{ cursor: 'pointer', color: '#888', fontSize: 16 }}
+                      onClick={() => { setEditingEma(true); setEmaInput(emaPeriod); }}
+                    >&#9881;</span>
+                  </Tooltip>
+                  {editingEma && (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 4 }}>
+                      <input
+                        type="number"
+                        min={2}
+                        max={200}
+                        value={emaInput}
+                        onChange={e => setEmaInput(e.target.value.replace(/[^0-9]/g, ''))}
+                        style={{ width: 48, fontSize: 14, padding: '2px 6px', borderRadius: 4, border: '1px solid #aaa' }}
+                      />
+                      <button
+                        style={{ marginLeft: 2, fontSize: 16, cursor: 'pointer', background: 'none', border: 'none', color: '#1976d2' }}
+                        onClick={() => {
+                          const val = parseInt(emaInput, 10);
+                          if (!isNaN(val) && val >= 2 && val <= 200) {
+                            setEmaPeriod(val);
+                            setEditingEma(false);
+                          }
+                        }}
+                        title="Confirm EMA period"
+                      >✔️</button>
+                      <button
+                        style={{ marginLeft: 2, fontSize: 16, cursor: 'pointer', background: 'none', border: 'none', color: '#ef5350' }}
+                        onClick={() => setEditingEma(false)}
+                        title="Cancel"
+                      >✖️</button>
+                    </span>
+                  )}
+                </div>
+                {/* RSI and MACD buttons as before, each on their own line */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    key="rsi14"
+                    className={`indicator-btn${selectedIndicators.includes('rsi14') ? ' active' : ''}`}
+                    style={{
+                      padding: '6px 18px',
+                      borderRadius: 6,
+                      border: '1px solid #aaa',
+                      background: selectedIndicators.includes('rsi14') ? '#1976d2' : '#f4f4f4',
+                      color: selectedIndicators.includes('rsi14') ? '#fff' : '#222',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onClick={() => setSelectedIndicators(prev =>
+                      prev.includes('rsi14')
+                        ? prev.filter(v => v !== 'rsi14')
+                        : [...prev, 'rsi14']
+                    )}
+                  >
+                    RSI 14
+                  </button>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
-                key={ind.value}
-                className={`indicator-btn${selectedIndicators.includes(ind.value) ? ' active' : ''}`}
+                    key="macd"
+                    className={`indicator-btn${selectedIndicators.includes('macd') ? ' active' : ''}`}
                 style={{
                   padding: '6px 18px',
                   borderRadius: 6,
                   border: '1px solid #aaa',
-                  background: selectedIndicators.includes(ind.value) ? '#1976d2' : '#f4f4f4',
-                  color: selectedIndicators.includes(ind.value) ? '#fff' : '#222',
+                      background: selectedIndicators.includes('macd') ? '#1976d2' : '#f4f4f4',
+                      color: selectedIndicators.includes('macd') ? '#fff' : '#222',
                   fontWeight: 500,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                 }}
                 onClick={() => setSelectedIndicators(prev =>
-                  prev.includes(ind.value)
-                    ? prev.filter(v => v !== ind.value)
-                    : [...prev, ind.value]
-                )}
-              >
-                {ind.label}
+                      prev.includes('macd')
+                        ? prev.filter(v => v !== 'macd')
+                        : [...prev, 'macd']
+                    )}
+                  >
+                    MACD
               </button>
-            ))}
+                </div>
           </div>
-          <div className="indicator-education-link">
+              <div className="indicator-education-link" style={{ marginTop: 12 }}>
             <Link to="/education#basic-technical-indicators">
               What are these indicators? Learn more.
             </Link>
           </div>
+            </div>
+          )}
           <div className="chart-wrapper">
-            <CandlestickChart data={stockData.data} highlightAfterHours={highlightAfterHours} indicators={selectedIndicators} />
+            {chartType === "candlestick" ? (
+            <CandlestickChart data={stockData.data} highlightAfterHours={highlightAfterHours} indicators={selectedIndicators} smaPeriod={smaPeriod} emaPeriod={emaPeriod} />
+            ) : (
+              <LineChart data={stockData.data} indicators={selectedIndicators} />
+            )}
           </div>
           {/* Debug: Show raw data as JSON */}
+          {false && (
           <pre style={{ 
             background: "#f4f4f4", 
             padding: "1em", 
@@ -186,7 +374,9 @@ const SearchPage = () => {
           }}>
             {JSON.stringify(stockData.data, null, 2)}
           </pre>
+          )}
           {/* Debug: Show data as a table */}
+          {false && (
           <div style={{ overflowX: "auto", marginTop: 20 }}>
             <table border="1" cellPadding="4" style={{ fontSize: 12, borderCollapse: "collapse" }}>
               <thead>
@@ -207,6 +397,7 @@ const SearchPage = () => {
               </tbody>
             </table>
           </div>
+          )}
         </div>
       )}
     </div>

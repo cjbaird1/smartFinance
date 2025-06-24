@@ -1,11 +1,21 @@
+@import './variables.css';
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+}
+
 .app-layout {
   display: flex;
   min-height: 100vh;
+  background: var(--bg-main);
 }
 
 .main-content {
   flex: 1;
   padding: 32px;
-  background: #fff;
+  background: var(--bg-main);
   min-width: 0;
 } 

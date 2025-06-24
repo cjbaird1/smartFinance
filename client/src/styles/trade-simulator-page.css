@@ -1,0 +1,49 @@
+@import './variables.css';
+
+
+.trade-simulator-page {
+  background: var(--bg-main);
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  color: var(--text-main);
+}
+
+.trade-simulator-page h2 {
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+.simulator-controls {
+  margin-bottom: 24px;
+}
+
+.step-button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  transition: background 0.2s;
+}
+
+.step-button:hover {
+  background: var(--accent-hover);
+}
+
+.chart-placeholder {
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  padding: 48px 0;
+  box-shadow: var(--shadow);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 18px;
+} 

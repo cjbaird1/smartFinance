@@ -8,11 +8,11 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Allow users to search for a stock ticker symbol and view detailed information.
 - **Requirements:**
-  - Provide an input for users to enter a valid stock ticker (e.g., AAPL, MSFT).
-  - Display real-time and historical price data for the selected ticker.
-  - Allow users to select the timeframe and number of data points (bars) to view.
-  - Render a candlestick chart visualizing the price data.
-  - Display error messages for invalid tickers or unavailable data.
+  - Provide an input for users to enter a valid stock ticker (e.g., AAPL, MSFT). DONE 
+  - Display real-time and historical price data for the selected ticker. DONE
+  - Allow users to select the timeframe and number of data points (bars) to view. DONE 
+  - Render a candlestick chart visualizing the price data. DONE
+  - Display error messages for invalid tickers or unavailable data. 
 
 ---
 

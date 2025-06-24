@@ -503,7 +503,7 @@ const EducationCenter = () => {
 
   return (
     <div className="education-center">
-      <h1>Education Center</h1>
+      <h2>Education Center</h2>
       <p className="intro-text">
         Welcome to our Education Center. Here you'll find essential information to help you understand
         the basics of technical analysis and trading concepts.
