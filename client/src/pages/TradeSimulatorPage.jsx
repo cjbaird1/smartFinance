@@ -436,19 +436,33 @@ const TradeSimulatorPage = () => {
     setStopLossError("");
   };
 
-  const handlePlayPause = () => {
+  // Effect to handle play/pause and speed changes for candlestick rendering
+  React.useEffect(() => {
     if (isPlaying) {
-      setIsPlaying(false);
+      // Clear any existing interval first
+      if (playInterval.current) {
+        clearInterval(playInterval.current);
+      }
+      playInterval.current = setInterval(() => {
+        setVisibleBars(prev => Math.min(prev + 1, stockData?.data?.length || 1));
+      }, 1000 / speed);
+    } else {
       if (playInterval.current) {
         clearInterval(playInterval.current);
         playInterval.current = null;
       }
-    } else {
-      setIsPlaying(true);
-      playInterval.current = setInterval(() => {
-        setVisibleBars(prev => Math.min(prev + 1, stockData?.data?.length || 1));
-      }, 1000 / speed);
     }
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (playInterval.current) {
+        clearInterval(playInterval.current);
+        playInterval.current = null;
+      }
+    };
+  }, [isPlaying, speed, stockData]);
+
+  const handlePlayPause = () => {
+    setIsPlaying(prev => !prev);
   };
 
   const handleStep = () => {

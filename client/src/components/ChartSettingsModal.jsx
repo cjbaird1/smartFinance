@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './Button';
 import '../styles/trade-simulator-page.css';
+import Tooltip from './Tooltip';
 
 export default function ChartSettingsModal({
   settings,
@@ -22,24 +23,36 @@ export default function ChartSettingsModal({
         <div className="order-modal-field" style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input type="checkbox" checked={settings.showBody} onChange={e => handleCheckbox('showBody', e.target.checked)} id="body" style={{ marginRight: 8 }} />
           <label htmlFor="body" style={{ minWidth: 70, fontWeight: 500, marginRight: 8 }}>Body</label>
-          <input type="color" value={settings.bodyUp} onChange={e => handleColor('bodyUp', e.target.value)} className="color-picker-square" title="Body Up Color" />
-          <input type="color" value={settings.bodyDown} onChange={e => handleColor('bodyDown', e.target.value)} className="color-picker-square" title="Body Down Color" />
+          <Tooltip content="Body Up Color">
+            <input type="color" value={settings.bodyUp} onChange={e => handleColor('bodyUp', e.target.value)} className="color-picker-square" />
+          </Tooltip>
+          <Tooltip content="Body Down Color">
+            <input type="color" value={settings.bodyDown} onChange={e => handleColor('bodyDown', e.target.value)} className="color-picker-square" />
+          </Tooltip>
         </div>
       </div>
       <div className="order-modal-row">
         <div className="order-modal-field" style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input type="checkbox" checked={settings.showBorders} onChange={e => handleCheckbox('showBorders', e.target.checked)} id="borders" style={{ marginRight: 8 }} />
           <label htmlFor="borders" style={{ minWidth: 70, fontWeight: 500, marginRight: 8 }}>Borders</label>
-          <input type="color" value={settings.bordersUp} onChange={e => handleColor('bordersUp', e.target.value)} className="color-picker-square" title="Borders Up Color" />
-          <input type="color" value={settings.bordersDown} onChange={e => handleColor('bordersDown', e.target.value)} className="color-picker-square" title="Borders Down Color" />
+          <Tooltip content="Borders Up Color">
+            <input type="color" value={settings.bordersUp} onChange={e => handleColor('bordersUp', e.target.value)} className="color-picker-square" />
+          </Tooltip>
+          <Tooltip content="Borders Down Color">
+            <input type="color" value={settings.bordersDown} onChange={e => handleColor('bordersDown', e.target.value)} className="color-picker-square" />
+          </Tooltip>
         </div>
       </div>
       <div className="order-modal-row">
         <div className="order-modal-field" style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input type="checkbox" checked={settings.showWick} onChange={e => handleCheckbox('showWick', e.target.checked)} id="wick" style={{ marginRight: 8 }} />
           <label htmlFor="wick" style={{ minWidth: 70, fontWeight: 500, marginRight: 8 }}>Wick</label>
-          <input type="color" value={settings.wickUp} onChange={e => handleColor('wickUp', e.target.value)} className="color-picker-square" title="Wick Up Color" />
-          <input type="color" value={settings.wickDown} onChange={e => handleColor('wickDown', e.target.value)} className="color-picker-square" title="Wick Down Color" />
+          <Tooltip content="Wick Up Color">
+            <input type="color" value={settings.wickUp} onChange={e => handleColor('wickUp', e.target.value)} className="color-picker-square" />
+          </Tooltip>
+          <Tooltip content="Wick Down Color">
+            <input type="color" value={settings.wickDown} onChange={e => handleColor('wickDown', e.target.value)} className="color-picker-square" />
+          </Tooltip>
         </div>
       </div>
       <div style={{ borderTop: '1px solid #333', margin: '18px 0' }}></div>

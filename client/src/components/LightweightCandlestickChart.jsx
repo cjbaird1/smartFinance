@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
 import '../styles/candlestick-chart.css';
+import { formatCandleTimestamp } from '../utils/dateUtils';
+import { getHoveredIndexAndPrev } from '../utils/chartUtils';
 
 const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takeProfit, stopLoss, limitOrders = [] }) => {
   const chartContainerRef = useRef();
@@ -9,6 +11,7 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
   const takeProfitLineRef = useRef();
   const stopLossLineRef = useRef();
   const limitOrderLineRefs = useRef({});
+  const [hoveredBar, setHoveredBar] = useState(null);
 
   // Only create chart and series on mount
   useEffect(() => {
@@ -41,6 +44,27 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
       wickUpColor: chartSettings?.wickUp || '#26a69a',
       wickDownColor: chartSettings?.wickDown || '#ef5350',
     });
+
+    // Add crosshairMove event for OHLC info panel
+    chartRef.current.subscribeCrosshairMove(param => {
+      console.log('crosshairMove param:', param);
+      if (param && param.seriesData && param.seriesData.size > 0) {
+        const priceData = param.seriesData.get(seriesRef.current);
+        if (priceData && param.time) {
+          setHoveredBar({
+            open: priceData.open,
+            high: priceData.high,
+            low: priceData.low,
+            close: priceData.close
+          });
+        } else {
+          setHoveredBar(null);
+        }
+      } else {
+        setHoveredBar(null);
+      }
+    });
+
     // Resize chart on container resize
     const handleResize = () => {
       chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
@@ -172,11 +196,71 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
   }, [takeProfit, stopLoss, limitOrders]);
 
   return (
-    <div
-      ref={chartContainerRef}
-      className="lw-candlestick-chart-container"
-      style={{ width: '100%', height }}
-    />
+    <div style={{ position: 'relative', width: '100%', height }}>
+      <div
+        ref={chartContainerRef}
+        className="lw-candlestick-chart-container"
+        style={{ width: '100%', height }}
+      />
+      {hoveredBar && (() => {
+        const upclose = hoveredBar.close > hoveredBar.open;
+        const { hoveredIndex, prevBar } = getHoveredIndexAndPrev(hoveredBar, data);
+        const prevClose = prevBar ? +prevBar.close : null;
+        const diff = prevClose !== null ? hoveredBar.close - prevClose : null;
+        const percent = prevClose !== null ? (diff / prevClose) * 100 : null;
+        // Get the timestamp from the hovered bar in the data array
+        let timestamp = null;
+        if (hoveredIndex !== -1 && data[hoveredIndex]) {
+          timestamp = data[hoveredIndex].time || data[hoveredIndex].datetime || data[hoveredIndex].date || data[hoveredIndex].timestamp;
+        }
+        return (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: 8,
+              left: 12,
+              background: 'rgba(24,26,32,0.92)',
+              color: '#ef4444',
+              padding: '4px 12px',
+              borderRadius: 6,
+              fontSize: 15,
+              fontWeight: 600,
+              zIndex: 10,
+              letterSpacing: 0.5,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            }}>
+              <span style={{color:'#fff'}}>O</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.open}</span> {' '}
+              <span style={{color:'#fff'}}>H</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.high}</span> {' '}
+              <span style={{color:'#fff'}}>L</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.low}</span> {' '}
+              <span style={{color:'#fff'}}>C</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.close}</span>
+              {diff !== null && percent !== null && (
+                <span style={{color: upclose ? '#22c55e' : '#ef4444', marginLeft: 8}}>
+                  {diff > 0 ? '+' : ''}{diff.toFixed(2)} ({percent > 0 ? '+' : ''}{percent.toFixed(2)}%)
+                </span>
+              )}
+            </div>
+            {timestamp && (
+              <div style={{
+                position: 'absolute',
+                top: 40,
+                left: 12,
+                background: 'rgba(24,26,32,0.92)',
+                color: '#f4f4f4',
+                padding: '2px 12px',
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 500,
+                zIndex: 10,
+                letterSpacing: 0.5,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              }}>
+                {formatCandleTimestamp(timestamp)}
+              </div>
+            )}
+          </>
+        );
+      })()}
+    </div>
   );
 };
 

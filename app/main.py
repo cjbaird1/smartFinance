@@ -73,3 +73,8 @@ def get_stock_data():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+    # Debug: Print a sample output from the /api/stock endpoint see datetime formatt
+    with app.test_client() as c:
+        response = c.get('/api/stock?ticker=AAPL&n_bars=1&interval=1m')
+        print('Sample /api/stock output:', response.json)
