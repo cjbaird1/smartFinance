@@ -5,7 +5,7 @@
 }
 
 .news-item:hover {
-  background-color: #f8f9fa;
+  background-color: #282B33;
 }
 
 .news-header {
@@ -18,7 +18,7 @@
 .news-title {
   margin: 0;
   font-size: 16px;
-  color: #333;
+  color: #fff;
   font-weight: 500;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .news-title a:hover {
-  color: #7c3aed;
+  color: var(--accent-hover);
 }
 
 .sentiment-badge {
@@ -57,12 +57,12 @@
   gap: 12px;
   margin-bottom: 8px;
   font-size: 13px;
-  color: #666;
+  color: #fff;
 }
 
 .news-summary {
   margin: 0;
   font-size: 14px;
-  color: #666;
+  color: #fff;
   line-height: 1.5;
 } 

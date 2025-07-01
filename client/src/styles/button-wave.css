@@ -1,0 +1,4 @@
+.button-wave:hover:not(:disabled) {
+  background: var(--accent-hover) !important;
+  color: #fff;
+} 

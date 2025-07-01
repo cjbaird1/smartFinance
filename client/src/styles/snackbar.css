@@ -1,0 +1,57 @@
+@import url('./variables.css');
+
+.snackbar {
+  visibility: hidden;
+  min-width: 280px;
+  max-width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--color-surface, #222);
+  color: var(--color-on-surface, #fff);
+  text-align: left;
+  border-radius: 6px;
+  padding: 16px 24px 16px 16px;
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 9999;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.snackbar.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.snackbar-error {
+  background-color: var(--bg-sidebar);
+  color: var(--color-error, #e53935);
+  border: 1px solid var(--color-error, #e53935);
+}
+
+.snackbar-success {
+  background-color: var(--color-success, #43a047);
+  color: var(--color-on-success, #fff);
+}
+
+.snackbar-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.3em;
+  margin-left: 8px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.snackbar-close:hover {
+  opacity: 1;
+} 

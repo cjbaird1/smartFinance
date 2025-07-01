@@ -12,6 +12,7 @@ import './button-wave.css';
  * - disabled: boolean
  * - style: object (inline style overrides)
  * - className: string (additional classes)
+ * - wave: boolean (whether to apply button-wave class)
  * - ...rest: other button props (onClick, type, etc.)
  */
 const Button = ({
@@ -21,6 +22,7 @@ const Button = ({
   disabled = false,
   style = {},
   className = '',
+  wave = true,
   ...rest
 }) => {
   let baseClass = '';
@@ -42,7 +44,8 @@ const Button = ({
   }
 
   // Compose className
-  let classes = baseClass + ' button-wave';
+  let classes = baseClass;
+  if (wave) classes += ' button-wave';
   if (active) classes += ' active';
   if (className) classes += ' ' + className;
 

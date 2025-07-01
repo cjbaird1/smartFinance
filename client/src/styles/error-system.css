@@ -1,0 +1,96 @@
+@import './variables.css';
+
+/* Centralized Error System */
+
+/* Input Error States */
+.input-error {
+  border: var(--error-border) !important; /* Important means that these attributes will take priority for the element Even if other things try to overried */
+  outline: var(--error-outline) !important;
+  color: var(--error-text) !important;
+}
+
+/* Error Message Display */
+.error-message {
+  color: var(--error-text);
+  font-size: var(--error-font-size);
+  margin-top: var(--error-margin-top);
+  font-weight: 500;
+}
+
+/* Error Container for Input Fields */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Search Form Error Alignment */
+.search-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  background: var(--bg-panel);
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Search Section for News Page */
+.search-section {
+  background: var(--bg-panel);
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Common Input Styles */
+.search-input,
+.nbars-input {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  width: 240px;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* Timeframe Select */
+.timeframe-select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* Search Button */
+.search-button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  transition: background 0.2s;
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.search-button:hover {
+  background: var(--accent-hover) !important;
+  color: #fff;
+} 

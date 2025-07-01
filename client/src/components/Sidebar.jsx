@@ -30,13 +30,6 @@ const Sidebar = () => {
       </NavLink>
 
       <NavLink 
-        to="/charts" 
-        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-      >
-        <span role="img" aria-label="charts">📈</span> Technical Charts
-      </NavLink>
-
-      <NavLink 
         to="/predictions" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
       >
@@ -46,7 +39,7 @@ const Sidebar = () => {
         to="/strategy" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
       >
-        <span role="img" aria-label="strategy">⚙️</span> Strategy Tester
+        <span role="img" aria-label="strategy">❓</span> FAQ
       </NavLink>
       
       <NavLink 
@@ -62,6 +55,15 @@ const Sidebar = () => {
         <span role="img" aria-label="alerts">🔔</span> Alerts
       </NavLink>
       
+      <div className="sidebar-bottom">
+        <NavLink 
+          to="/charts" 
+          className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+          style={{ marginTop: 'auto' }}
+        >
+          <span role="img" aria-label="settings">⚙️</span> Settings
+        </NavLink>
+      </div>
     </div>
   );
 };

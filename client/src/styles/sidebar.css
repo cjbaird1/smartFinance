@@ -10,6 +10,9 @@
   padding-top: 18px;
   box-shadow: 2px 0 8px rgba(0,0,0,0.18);
   font-family: 'Segoe UI', Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .sidebar-title {
@@ -58,4 +61,8 @@
   cursor: not-allowed;
   background: none;
   border-left: 4px solid transparent;
+}
+
+.sidebar-bottom {
+  margin-bottom: 200px;
 } 

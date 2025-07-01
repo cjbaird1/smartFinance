@@ -9,4 +9,13 @@
   --accent-hover: #1e40af;
   --radius: 12px;
   --shadow: 0 4px 24px rgba(0,0,0,0.18);
+  
+  /* Error System Variables */
+  --error-color: #ef5350;
+  --error-border: 2px solid var(--error-color);
+  --error-outline: 2px solid var(--error-color);
+  --error-bg: #2d1a1a;
+  --error-text: var(--error-color);
+  --error-font-size: 13px;
+  --error-margin-top: 2px;
 } 

@@ -12,43 +12,6 @@
   color: var(--text-main);
 }
 
-.search-section {
-  background: var(--bg-panel);
-  padding: 18px 24px;
-  border-radius: var(--radius);
-  margin-bottom: 24px;
-  box-shadow: var(--shadow);
-}
-
-.search-input {
-  padding: 10px 14px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  width: 240px;
-  margin-right: 12px;
-  background: var(--bg-main);
-  color: var(--text-main);
-}
-
-.search-button {
-  padding: 10px 24px;
-  font-size: 16px;
-  border-radius: 6px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  box-shadow: var(--shadow);
-  transition: background 0.2s;
-}
-
-.search-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 .news-section,
 .sentiment-section {
   background: var(--bg-panel);
@@ -136,6 +99,11 @@
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+}
+
+.filter-button:hover {
+  background: var(--accent-hover) !important;
+  color: #fff;
 }
 
 .economic-calendar-section {

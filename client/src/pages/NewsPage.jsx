@@ -4,7 +4,10 @@ import SentimentAnalysis from '../components/SentimentAnalysis';
 import SentimentInsights from '../components/SentimentInsights';
 import DateRangePicker from '../components/DateRangePicker';
 import Button from '../components/Button';
+import ValidatedInput from '../components/ValidatedInput';
+import { useTickerValidation } from '../hooks/useTickerValidation';
 import '../styles/news-page.css';
+import '../styles/error-system.css';
 
 const sentimentTypes = [
   { label: 'All', value: 'all' },
@@ -32,23 +35,54 @@ const NewsPage = () => {
   const [isSentimentSectionOpen, setIsSentimentSectionOpen] = useState(true);
   const [isSentimentInsightsOpen, setIsSentimentInsightsOpen] = useState(true);
 
+  // Use the custom hook for ticker validation
+  const { tickerError, validateTicker, handleTickerError, clearTickerError } = useTickerValidation();
+
   const fetchNewsAndSentiment = async (ticker) => {
     setLoading(true);
     setError(null);
+    clearTickerError();
+    
+    // Validate ticker using the custom hook
+    if (!validateTicker(ticker)) {
+      setLoading(false);
+      return;
+    }
+    
     try {
       const response = await fetch(`http://localhost:5000/api/news?ticker=${ticker}`);
+      const data = await response.json();
+      
       if (!response.ok) {
+        const tickerErrorMsg = handleTickerError(data.error, ticker);
+        if (tickerErrorMsg) {
+          throw new Error(tickerErrorMsg);
+        }
+        setError('Failed to fetch news and sentiment data');
         throw new Error('Failed to fetch news and sentiment data');
       }
-      const data = await response.json();
+      
+      if (!data.articles || data.articles.length === 0) {
+        const msg = `No Data Found for ticker symbol: "${ticker}"`;
+        handleTickerError(msg, ticker);
+        return;
+      }
+      
       setNewsData(data.articles || []);
       setSentimentData(data.sentiment_analysis || null);
     } catch (err) {
-      setError('Failed to fetch news and sentiment data');
+      if (!err.message.includes(`No Data Found for ticker symbol: "${ticker}"`)) {
+        setError('Failed to fetch news and sentiment data');
+      }
       console.error('Error fetching news:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTickerChange = (e) => {
+    setSelectedTicker(e.target.value.toUpperCase());
+    clearTickerError();
   };
 
   const filteredNews = newsData
@@ -87,18 +121,18 @@ const NewsPage = () => {
       
       {/* Search Section */}
       <div className="search-section">
-        <input
+        <ValidatedInput
           type="text"
           value={selectedTicker}
-          onChange={(e) => setSelectedTicker(e.target.value.toUpperCase())}
+          onChange={handleTickerChange}
           placeholder="Enter stock ticker (e.g. AAPL)"
-          className="search-input"
+          error={tickerError}
         />
         <Button
           onClick={() => fetchNewsAndSentiment(selectedTicker)}
           variant="search"
           disabled={loading}
-          wave
+          wave={false}
         >
           {loading ? 'Loading...' : 'Get News & Sentiment'}
         </Button>
@@ -121,6 +155,7 @@ const NewsPage = () => {
                     variant="filter"
                     active={filter === type.value}
                     onClick={() => setFilter(type.value)}
+                    wave={false}
                   >
                     {type.label}
                   </Button>

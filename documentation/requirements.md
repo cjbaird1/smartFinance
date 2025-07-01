@@ -12,7 +12,7 @@ This document outlines the functional requirements for each main page accessible
   - Display real-time and historical price data for the selected ticker. DONE
   - Allow users to select the timeframe and number of data points (bars) to view. DONE 
   - Render a candlestick chart visualizing the price data. DONE
-  - Display error messages for invalid tickers or unavailable data. 
+  - Display error messages for invalid tickers or unavailable data. DONE
 
 ---
 
@@ -20,10 +20,10 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Offer advanced charting capabilities for technical analysis.
 - **Requirements:**
-  - Display interactive charts for selected tickers.
-  - Support multiple chart types (e.g., candlestick, line, bar).
-  - Allow users to apply technical indicators and overlays (e.g., moving averages, RSI).
-  - Enable zooming, panning, and other chart interactions.
+  - Display interactive charts for selected tickers. DONE
+  - Support multiple chart types (e.g., candlestick, line, bar). DONE 
+  - Allow users to apply technical indicators and overlays (e.g., moving averages, RSI). DONE (Partially there's ui bug w RSI)
+  - Enable zooming, panning, and other chart interactions. DONE
   - Provide options to customize chart appearance and settings.
 
 ---
@@ -55,12 +55,12 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Aggregate and analyze recent news articles related to a selected stock ticker.
 - **Requirements:**
-  - Fetch and display recent news articles for the selected ticker from reliable sources (e.g., Finnhub).
-  - Show article headline, source, publication date, summary, and a link to the full article.
-  - Analyze and display sentiment for each article (positive, negative, neutral).
-  - Present an overall sentiment summary and trend for the ticker.
-  - Allow users to filter articles by sentiment type (All, Positive, Neutral, Negative).
-  - Display articles ordered by sentiment (Positive, Neutral, Negative) when the 'All' filter is selected.
+  - Fetch and display recent news articles for the selected ticker from reliable sources (e.g., Finnhub). DONE 
+  - Show article headline, source, publication date, summary, and a link to the full article. DONE 
+  - Analyze and display sentiment for each article (positive, negative, neutral). DONE 
+  - Present an overall sentiment summary and trend for the ticker. DONE 
+  - Allow users to filter articles by sentiment type (All, Positive, Neutral, Negative). DONE 
+  - Display articles ordered by sentiment (Positive, Neutral, Negative) when the 'All' filter is selected. DONE 
   - The sentiment filter buttons should be integrated directly within the 'Latest News' collapsible header.
   - **The sentiment filter buttons should only be visible when the 'Latest News' collapsible header is open, positioned to the right, above the first article.**
   - Provide a collapsible 'Sentiment Insights' section displaying:

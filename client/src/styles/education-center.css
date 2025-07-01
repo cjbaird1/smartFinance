@@ -86,7 +86,7 @@
 }
 
 .importance-card h3 {
-  color: var(--accent);
+  color: #fff;
   margin-bottom: 16px;
   font-size: 1.3rem;
 }
@@ -273,7 +273,7 @@
 }
 
 .term h4 {
-  color: #7c3aed;
+  color: #fff;
   margin-bottom: 12px;
 }
 
@@ -294,4 +294,147 @@
   .why-matters {
     grid-template-columns: 1fr;
   }
-} 
+}
+
+.education-center-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #181A20;
+  color: #f4f4f4;
+}
+
+.education-center-header {
+  padding: 12px 0 18px 0;
+  text-align: left;
+  border-bottom: 1.5px solid #23262F;
+  margin-bottom: 0;
+}
+
+.education-center-header h2 {
+  font-weight: 700;
+  color: #f4f4f4;
+  margin-left: 36px;
+}
+
+.education-center-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px 48px 24px;
+  gap: 48px;
+}
+
+.education-center-main-content {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-top: 32px;
+}
+
+.education-section {
+  margin-bottom: 48px;
+}
+
+.education-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.education-subsection {
+  margin-left: 18px;
+  margin-bottom: 32px;
+}
+
+.education-subsection h3 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.education-center-toc {
+  position: sticky;
+  top: 32px;
+  align-self: flex-start;
+  min-width: 220px;
+  max-width: 260px;
+  background: #181A20;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(44,62,80,0.10);
+  padding: 24px 18px 24px 18px;
+  margin-top: 32px;
+  height: fit-content;
+}
+
+.toc-title {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.education-center-toc ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.education-center-toc li {
+  margin-bottom: 6px;
+}
+
+.education-center-toc a {
+  color: #f4f4f4;
+  text-decoration: none;
+  font-size: .8rem;
+  transition: color 0.18s;
+}
+
+.education-center-toc a:hover, .education-center-toc a:focus {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.toc-subsection {
+  font-size: 0.55rem;
+  margin-left: 12px;
+  margin-bottom: 2px;
+  line-height: 1.1;
+  padding: 0;
+}
+
+/* Remove accordion styles if present */
+.section-header, .sub-section-header, .arrow, .section-content, .sub-section-content {
+  all: unset;
+}
+
+.back-to-top-btn {
+  display: block;
+  margin: 40px auto 0 auto;
+  padding: 12px 32px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.back-to-top-btn:hover, .back-to-top-btn:focus {
+  background: var(--bg-main);
+  color: var(--accent);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  outline: none;
+}  

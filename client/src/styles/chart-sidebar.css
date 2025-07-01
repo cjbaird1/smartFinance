@@ -1,0 +1,38 @@
+@import './variables.css';
+
+.chart-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 48px;
+  background: var(--bg-sidebar, #1C1E24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+}
+
+.sidebar-btn {
+  background: none;
+  border: none;
+  margin: 8px 0;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.sidebar-btn:hover,
+.sidebar-btn.active {
+  color: var(--accent, #2563eb);
+  background: rgba(37,99,235,0.08);
+} 
