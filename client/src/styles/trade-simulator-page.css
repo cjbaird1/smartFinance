@@ -409,4 +409,17 @@
 
 .trade-history-row:hover {
   background: #23262F;
+}
+
+.pending-cancel-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  transition: color 0.18s;
+}
+.pending-cancel-btn:hover {
+  color: var(--accent);
 } 

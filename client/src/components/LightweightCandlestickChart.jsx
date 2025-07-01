@@ -2,12 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
 import '../styles/candlestick-chart.css';
 
-const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takeProfit, stopLoss }) => {
+const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takeProfit, stopLoss, limitOrders = [] }) => {
   const chartContainerRef = useRef();
   const chartRef = useRef();
   const seriesRef = useRef();
   const takeProfitLineRef = useRef();
   const stopLossLineRef = useRef();
+  const limitOrderLineRefs = useRef({});
 
   // Only create chart and series on mount
   useEffect(() => {
@@ -53,6 +54,7 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
       seriesRef.current = null;
       takeProfitLineRef.current = null;
       stopLossLineRef.current = null;
+      limitOrderLineRefs.current = {};
     };
   // Only run on mount/unmount
   }, []);
@@ -84,26 +86,30 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
     }
   }, [data]);
 
-  // Handle takeProfit and stopLoss price lines
+  // Handle takeProfit, stopLoss, and limit order price lines
   useEffect(() => {
     if (!seriesRef.current) return;
     // Remove previous lines if they exist
     if (takeProfitLineRef.current) {
       try {
         seriesRef.current.removePriceLine(takeProfitLineRef.current);
-      } catch (e) {
-        // ignore if already disposed
-      }
+      } catch (e) {}
       takeProfitLineRef.current = null;
     }
     if (stopLossLineRef.current) {
       try {
         seriesRef.current.removePriceLine(stopLossLineRef.current);
-      } catch (e) {
-        // ignore if already disposed
-      }
+      } catch (e) {}
       stopLossLineRef.current = null;
     }
+    // Remove previous limit order lines
+    Object.values(limitOrderLineRefs.current).forEach(line => {
+      try {
+        seriesRef.current.removePriceLine(line);
+      } catch (e) {}
+    });
+    limitOrderLineRefs.current = {};
+
     // Add new take profit line
     if (typeof takeProfit === 'number' && !isNaN(takeProfit)) {
       takeProfitLineRef.current = seriesRef.current.createPriceLine({
@@ -126,6 +132,22 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
         title: 'Stop Loss',
       });
     }
+    // Add limit order lines
+    if (Array.isArray(limitOrders)) {
+      limitOrders.forEach(order => {
+        if (typeof order.price === 'number' && !isNaN(order.price)) {
+          const line = seriesRef.current.createPriceLine({
+            price: order.price,
+            color: '#888', // neutral gray
+            lineWidth: 2,
+            lineStyle: 2, // dashed
+            axisLabelVisible: true,
+            title: 'Limit Order',
+          });
+          limitOrderLineRefs.current[order.id] = line;
+        }
+      });
+    }
     // Cleanup on unmount
     return () => {
       if (seriesRef.current && takeProfitLineRef.current) {
@@ -140,8 +162,14 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
         } catch (e) {}
         stopLossLineRef.current = null;
       }
+      Object.values(limitOrderLineRefs.current).forEach(line => {
+        try {
+          seriesRef.current.removePriceLine(line);
+        } catch (e) {}
+      });
+      limitOrderLineRefs.current = {};
     };
-  }, [takeProfit, stopLoss]);
+  }, [takeProfit, stopLoss, limitOrders]);
 
   return (
     <div

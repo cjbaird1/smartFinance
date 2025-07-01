@@ -7,6 +7,8 @@ import ValidatedInput from '../components/ValidatedInput';
 import { useTickerValidation } from '../hooks/useTickerValidation';
 import '../styles/trade-simulator-page.css';
 import '../styles/error-system.css';
+import { getCurrentClosingPrice, getCurrentCandlestick, shouldOrderBeFilled, calculatePL } from '../utils/tradeSimulator';
+import OrderModal from '../components/OrderModal';
 
 const TIMEFRAMES = [
   { value: '1m', label: '1 Minute' },
@@ -84,10 +86,6 @@ const TradeSimulatorPage = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [chartSettings, setChartSettings] = useState(defaultChartSettings);
   const playInterval = useRef(null);
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const [showSellModal, setShowSellModal] = useState(false);
-  const buyModalDrag = useDraggableModal({ x: 0, y: 0 });
-  const sellModalDrag = useDraggableModal({ x: 0, y: 0 });
 
   // Unified order form state for both modals
   const [orderSide, setOrderSide] = useState("Buy");
@@ -125,55 +123,15 @@ const TradeSimulatorPage = () => {
   // Use the custom hook for ticker validation
   const { tickerError, validateTicker, handleTickerError, clearTickerError } = useTickerValidation();
 
-  // Helper function to get current closing price
-  const getCurrentClosingPrice = () => {
-    if (!stockData || !stockData.data || stockData.data.length === 0 || visibleBars === 0) {
-      return 0;
-    }
-    const currentIndex = Math.min(visibleBars - 1, stockData.data.length - 1);
-    return parseFloat(stockData.data[currentIndex].close);
-  };
-
-  // Helper function to get current candlestick data
-  const getCurrentCandlestick = () => {
-    if (!stockData || !stockData.data || stockData.data.length === 0 || visibleBars === 0) {
-      return null;
-    }
-    const currentIndex = Math.min(visibleBars - 1, stockData.data.length - 1);
-    return stockData.data[currentIndex];
-  };
-
-  // Helper function to check if an order should be filled
-  const shouldOrderBeFilled = (order, candlestick) => {
-    if (!candlestick) return false;
-    
-    const high = parseFloat(candlestick.high);
-    const low = parseFloat(candlestick.low);
-    const limitPrice = parseFloat(order.entryPrice);
-    
-    if (order.side === "Buy") {
-      // Buy order is filled if price goes down to or below the limit price
-      return low <= limitPrice;
-    } else {
-      // Sell order is filled if price goes up to or above the limit price
-      return high >= limitPrice;
-    }
-  };
+  // Add unified modal state and drag state
+  const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const orderModalDrag = useDraggableModal({ x: 0, y: 0 });
 
   // Calculate win rate from trade history
   const calculateWinRate = () => {
     if (tradeHistory.length === 0) return 0;
     const winningTrades = tradeHistory.filter(trade => trade.finalPL > 0).length;
     return (winningTrades / tradeHistory.length) * 100;
-  };
-
-  // Calculate P&L based on current position and price
-  const calculatePL = (position, currentPrice) => {
-    if (!position) return 0;
-    
-    const priceDifference = currentPrice - position.entryPrice;
-    const pl = position.side === "Buy" ? priceDifference : -priceDifference;
-    return pl * position.size;
   };
 
   // Calculate average R/R (Reward/Risk) from trade history
@@ -195,13 +153,13 @@ const TradeSimulatorPage = () => {
   // Update P&L when visible bars change (new candlestick)
   React.useEffect(() => {
     if (activePosition && stockData && stockData.data && stockData.data.length > 0) {
-      const currentPrice = getCurrentClosingPrice();
+      const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
       const newPL = calculatePL(activePosition, currentPrice);
       setActivePL(newPL);
 
       // Check for take profit and stop loss hits
-      const high = parseFloat(getCurrentCandlestick()?.high || currentPrice);
-      const low = parseFloat(getCurrentCandlestick()?.low || currentPrice);
+      const high = parseFloat(getCurrentCandlestick(stockData, visibleBars)?.high || currentPrice);
+      const low = parseFloat(getCurrentCandlestick(stockData, visibleBars)?.low || currentPrice);
       
       let shouldClosePosition = false;
       let closeReason = '';
@@ -234,6 +192,9 @@ const TradeSimulatorPage = () => {
         const plText = finalPL >= 0 ? `+$${finalPL.toFixed(2)}` : `-$${Math.abs(finalPL).toFixed(2)}`;
         
         // Add to trade history
+        const closeBar = visibleBars - 1;
+        const closeDate = stockData && stockData.data && stockData.data[closeBar] ? stockData.data[closeBar].time || stockData.data[closeBar].datetime || stockData.data[closeBar].date : null;
+        const duration = activePosition.openBar !== undefined ? (closeBar - activePosition.openBar) : null;
         const tradeRecord = {
           id: Date.now(),
           side: activePosition.side,
@@ -242,7 +203,12 @@ const TradeSimulatorPage = () => {
           exitPrice: closeReason === "Take Profit" ? activePosition.takeProfit : activePosition.stopLoss,
           finalPL: finalPL,
           closeReason: closeReason,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          openBar: activePosition.openBar,
+          openDate: activePosition.openDate,
+          closeBar,
+          closeDate,
+          duration
         };
         
         setTradeHistory(prev => [...prev, tradeRecord]);
@@ -258,18 +224,18 @@ const TradeSimulatorPage = () => {
 
   // Update entry price for market orders when current price changes
   React.useEffect(() => {
-    if (orderType === "Market" && (showBuyModal || showSellModal)) {
-      const currentPrice = getCurrentClosingPrice();
+    if (orderType === "Market") {
+      const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
       if (currentPrice > 0) {
         setEntryPrice(currentPrice.toFixed(2));
       }
     }
-  }, [visibleBars, orderType, showBuyModal, showSellModal, stockData]);
+  }, [visibleBars, orderType, stockData]);
 
   // Execute pending orders when new candlestick appears
   React.useEffect(() => {
     if (visibleBars > 1 && pendingOrders.length > 0 && stockData && stockData.data) {
-      const currentCandlestick = getCurrentCandlestick();
+      const currentCandlestick = getCurrentCandlestick(stockData, visibleBars);
       if (!currentCandlestick) return;
 
       const ordersToExecute = pendingOrders.filter(order => shouldOrderBeFilled(order, currentCandlestick));
@@ -285,13 +251,17 @@ const TradeSimulatorPage = () => {
 
   const executeOrder = (order, candlestick) => {
     const executionPrice = parseFloat(order.entryPrice);
+    const openBar = visibleBars - 1;
+    const openDate = stockData && stockData.data && stockData.data[openBar] ? stockData.data[openBar].time || stockData.data[openBar].datetime || stockData.data[openBar].date : null;
     const newPosition = {
       side: order.side,
       size: order.size,
       entryPrice: executionPrice,
       takeProfit: parseFloat(order.takeProfit) || 0,
       stopLoss: parseFloat(order.stopLoss) || 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      openBar,
+      openDate
     };
     
     setActivePosition(newPosition);
@@ -372,10 +342,10 @@ const TradeSimulatorPage = () => {
 
     if (orderType === "Market") {
       // Execute market order immediately
-      const currentPrice = getCurrentClosingPrice();
+      const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
       if (currentPrice > 0) {
         const executedOrder = { ...order, entryPrice: currentPrice };
-        executeOrder(executedOrder, getCurrentCandlestick());
+        executeOrder(executedOrder, getCurrentCandlestick(stockData, visibleBars));
       } else {
         showSnackbar('Cannot execute market order - no current price available', 'error');
         return;
@@ -391,18 +361,22 @@ const TradeSimulatorPage = () => {
     setEntryPrice('');
     setTakeProfit('');
     setStopLoss('');
-    setShowBuyModal(false);
-    setShowSellModal(false);
+
+    // Close the modal after successful order
+    setOrderModalOpen(false);
   };
 
   const handleClosePosition = () => {
     if (!activePosition) return;
 
-    const currentPrice = getCurrentClosingPrice();
+    const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
     const finalPL = calculatePL(activePosition, currentPrice);
     const plText = finalPL >= 0 ? `+$${finalPL.toFixed(2)}` : `-$${Math.abs(finalPL).toFixed(2)}`;
 
     // Add to trade history
+    const closeBar = visibleBars - 1;
+    const closeDate = stockData && stockData.data && stockData.data[closeBar] ? stockData.data[closeBar].time || stockData.data[closeBar].datetime || stockData.data[closeBar].date : null;
+    const duration = activePosition.openBar !== undefined ? (closeBar - activePosition.openBar) : null;
     const tradeRecord = {
       id: Date.now(),
       side: activePosition.side,
@@ -411,7 +385,12 @@ const TradeSimulatorPage = () => {
       exitPrice: currentPrice,
       finalPL: finalPL,
       closeReason: 'Manual Close',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      openBar: activePosition.openBar,
+      openDate: activePosition.openDate,
+      closeBar,
+      closeDate,
+      duration
     };
 
     setTradeHistory(prev => [...prev, tradeRecord]);
@@ -430,7 +409,7 @@ const TradeSimulatorPage = () => {
   const handleOrderTypeChange = (newType) => {
     setOrderType(newType);
     if (newType === "Market") {
-      const currentPrice = getCurrentClosingPrice();
+      const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
       if (currentPrice > 0) {
         setEntryPrice(currentPrice.toFixed(2));
       }
@@ -455,62 +434,6 @@ const TradeSimulatorPage = () => {
   const handleStopLossChange = (value) => {
     setStopLoss(value);
     setStopLossError("");
-  };
-
-  const handleCloseBuyModal = () => {
-    setShowBuyModal(false);
-    setPositionSizeError("");
-    setEntryPriceError("");
-    setTakeProfitError("");
-    setStopLossError("");
-    setPositionSize('');
-    setEntryPrice('');
-    setTakeProfit('');
-    setStopLoss('');
-  };
-
-  const handleCloseSellModal = () => {
-    setShowSellModal(false);
-    setPositionSizeError("");
-    setEntryPriceError("");
-    setTakeProfitError("");
-    setStopLossError("");
-    setPositionSize('');
-    setEntryPrice('');
-    setTakeProfit('');
-    setStopLoss('');
-  };
-
-  const handleOpenBuyModal = () => {
-    setOrderSide("Buy");
-    setShowBuyModal(true);
-    setPositionSizeError("");
-    setEntryPriceError("");
-    setTakeProfitError("");
-    setStopLossError("");
-    // Set entry price for market orders
-    if (orderType === "Market") {
-      const currentPrice = getCurrentClosingPrice();
-      if (currentPrice > 0) {
-        setEntryPrice(currentPrice.toFixed(2));
-      }
-    }
-  };
-
-  const handleOpenSellModal = () => {
-    setOrderSide("Sell");
-    setShowSellModal(true);
-    setPositionSizeError("");
-    setEntryPriceError("");
-    setTakeProfitError("");
-    setStopLossError("");
-    // Set entry price for market orders
-    if (orderType === "Market") {
-      const currentPrice = getCurrentClosingPrice();
-      if (currentPrice > 0) {
-        setEntryPrice(currentPrice.toFixed(2));
-      }
-    }
   };
 
   const handlePlayPause = () => {
@@ -702,6 +625,7 @@ const TradeSimulatorPage = () => {
               chartSettings={chartSettings}
               takeProfit={activePosition && activePosition.takeProfit > 0 ? activePosition.takeProfit : null}
               stopLoss={activePosition && activePosition.stopLoss > 0 ? activePosition.stopLoss : null}
+              limitOrders={pendingOrders.filter(order => typeof order.entryPrice === 'number' && !isNaN(order.entryPrice)).map(order => ({ id: order.id, price: order.entryPrice }))}
             />
           ) : (
             <div className="chart-placeholder">Chart will appear here after you select a ticker.</div>
@@ -712,14 +636,42 @@ const TradeSimulatorPage = () => {
           <div style={{ display: 'flex', gap: '12px', marginBottom: 16 }}>
             <button
               className="buy-btn"
-              onClick={handleOpenBuyModal}
+              onClick={() => {
+                setOrderSide("Buy");
+                setOrderModalOpen(true);
+                setPositionSizeError("");
+                setEntryPriceError("");
+                setTakeProfitError("");
+                setStopLossError("");
+                // Set entry price for market orders
+                if (orderType === "Market") {
+                  const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
+                  if (currentPrice > 0) {
+                    setEntryPrice(currentPrice.toFixed(2));
+                  }
+                }
+              }}
               disabled={false}
             >
               Buy
             </button>
             <button
               className="sell-btn"
-              onClick={handleOpenSellModal}
+              onClick={() => {
+                setOrderSide("Sell");
+                setOrderModalOpen(true);
+                setPositionSizeError("");
+                setEntryPriceError("");
+                setTakeProfitError("");
+                setStopLossError("");
+                // Set entry price for market orders
+                if (orderType === "Market") {
+                  const currentPrice = getCurrentClosingPrice(stockData, visibleBars);
+                  if (currentPrice > 0) {
+                    setEntryPrice(currentPrice.toFixed(2));
+                  }
+                }
+              }}
               disabled={false}
             >
               Sell
@@ -735,13 +687,13 @@ const TradeSimulatorPage = () => {
           </div>
           {activePosition && (
             <div style={{ 
-              background: '#1a1d24', 
+              background: 'var(--bg-panel)', 
               padding: '12px', 
               borderRadius: '8px', 
               marginBottom: '16px',
-              border: '1px solid #333'
+              border: '1px solid var(--border)'
             }}>
-              <div style={{ fontSize: '14px', color: '#aaa', marginBottom: '4px' }}>Active Position:</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Position:</div>
               <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
                 {activePosition.side} {activePosition.size} lot(s) @ ${activePosition.entryPrice.toFixed(2)}
               </div>
@@ -760,25 +712,25 @@ const TradeSimulatorPage = () => {
           {/* Pending Orders Section */}
           {pendingOrders.length > 0 && (
             <div style={{ 
-              background: '#1a1d24', 
+              background: 'var(--bg-panel)', 
               padding: '12px', 
               borderRadius: '8px', 
               marginBottom: '16px',
-              border: '1px solid #333'
+              border: '1px solid var(--border)'
             }}>
-              <div style={{ fontSize: '14px', color: '#aaa', marginBottom: '8px' }}>Pending Orders:</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Pending Orders:</div>
               {pendingOrders.map((order, index) => (
                 <div key={order.id} style={{ 
                   fontSize: '14px', 
                   marginBottom: '4px',
                   padding: '6px 8px',
-                  background: '#23262F',
+                  background: 'var(--bg-panel)',
                   borderRadius: '4px',
-                  border: '1px solid #444'
+                  border: '1px solid var(--border)'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ 
-                      color: order.side === 'Buy' ? '#22c55e' : '#ef4444',
+                      color: order.side === 'Buy' ? '#22c55e' : 'var(--error-color)',
                       fontWeight: '600'
                     }}>
                       {order.side} {order.size} lot(s) @ ${order.entryPrice.toFixed(2)}
@@ -787,16 +739,9 @@ const TradeSimulatorPage = () => {
                       onClick={() => {
                         cancelPendingOrder(order.id);
                       }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#888',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        padding: '2px 6px'
-                      }}
+                      className="pending-cancel-btn"
                     >
-                      Cancel
+                      Cancel Order
                     </button>
                   </div>
                 </div>
@@ -823,13 +768,13 @@ const TradeSimulatorPage = () => {
         <div className="trade-history-section">
           <h3>Trade History</h3>
           <div style={{ 
-            background: '#1a1d24', 
+            background: 'var(--bg-panel)', 
             padding: '12px 16px', 
             borderRadius: '8px', 
             marginBottom: '16px',
-            border: '1px solid #333',
+            border: '1px solid var(--border)',
             fontSize: '14px',
-            color: '#aaa'
+            color: 'var(--text-muted)'
           }}>
             Starting Balance: $10,000.00 | Current Balance: ${totalPL.toFixed(2)} | 
             Net P&L: <span className={totalPL >= 10000 ? 'pl-positive' : 'pl-negative'}>
@@ -843,6 +788,9 @@ const TradeSimulatorPage = () => {
               <div>Size</div>
               <div>Entry Price</div>
               <div>Exit Price</div>
+              <div>Open Day</div>
+              <div>Close Day</div>
+              <div>Duration</div>
               <div>P&L</div>
               <div>Exit Reason</div>
             </div>
@@ -853,6 +801,9 @@ const TradeSimulatorPage = () => {
                 <div>{trade.size}</div>
                 <div>${trade.entryPrice.toFixed(2)}</div>
                 <div>${trade.exitPrice.toFixed(2)}</div>
+                <div>{trade.openDate ? trade.openDate : '-'}</div>
+                <div>{trade.closeDate ? trade.closeDate : '-'}</div>
+                <div>{trade.duration !== null && trade.duration !== undefined ? trade.duration : '-'}</div>
                 <div className={trade.finalPL > 0 ? 'pl-positive' : 'pl-negative'}>
                   ${trade.finalPL.toFixed(2)}
                 </div>
@@ -863,274 +814,51 @@ const TradeSimulatorPage = () => {
         </div>
       )}
 
-      {/* Buy Modal */}
-      {showBuyModal && (
-        <div className="modal-overlay" onClick={handleCloseBuyModal}>
-          <div
-            className="modal-content order-modal"
-            onClick={e => e.stopPropagation()}
-            style={{
-              position: 'absolute',
-              left: `calc(50% + ${buyModalDrag.position.x}px)` ,
-              top: `calc(50% + ${buyModalDrag.position.y}px)` ,
-              transform: 'translate(-50%, -50%)',
-              cursor: 'default',
-            }}
-          >
-            <div className="modal-header" style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 8 }}>
-              <div
-                className="modal-drag-bar"
-                onMouseDown={buyModalDrag.onMouseDown}
-                style={{
-                  width: '100%',
-                  height: 18,
-                  cursor: 'grab',
-                  background: 'linear-gradient(90deg, #23262F 60%, #23262F00)',
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 12,
-                  marginBottom: 6,
-                }}
-              />
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2 className="modal-title" style={{ margin: 0 }}>Place {orderSide} Order</h2>
-                <button className="modal-close-btn" onClick={handleCloseBuyModal} aria-label="Close">&times;</button>
-              </div>
-            </div>
-            <div className="order-modal-row">
-              <div className="order-modal-field">
-                <label htmlFor="side-select">Side</label>
-                <select
-                  id="side-select"
-                  value={orderSide}
-                  onChange={(e) => handleOrderSideChange(e.target.value)}
-                >
-                  <option>Buy</option>
-                  <option>Sell</option>
-                </select>
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="type-select">Type</label>
-                <select
-                  id="type-select"
-                  value={orderType}
-                  onChange={(e) => handleOrderTypeChange(e.target.value)}
-                >
-                  <option>Limit</option>
-                  <option>Market</option>
-                </select>
-              </div>
-            </div>
-            <div className="order-modal-row">
-              <div className="order-modal-field">
-                <label htmlFor="position-size">Position Size (Lots)</label>
-                <input
-                  id="position-size"
-                  type="number"
-                  min="0"
-                  value={positionSize}
-                  onChange={(e) => handlePositionSizeChange(e.target.value)}
-                  className={positionSizeError ? 'input-error' : ''}
-                />
-                {positionSizeError && (
-                  <span className="error-message">{positionSizeError}</span>
-                )}
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="entry-price">Entry Price</label>
-                <input
-                  id="entry-price"
-                  type="number"
-                  min="0"
-                  value={entryPrice}
-                  onChange={(e) => handleEntryPriceChange(e.target.value)}
-                  readOnly={orderType === "Market"}
-                  className={entryPriceError ? 'input-error' : ''}
-                />
-                {entryPriceError && (
-                  <span className="error-message">{entryPriceError}</span>
-                )}
-              </div>
-            </div>
-            <div className="order-modal-toggle-row">
-              <div className="order-modal-field">
-                <label htmlFor="take-profit">Take Profit</label>
-                <input
-                  id="take-profit"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={takeProfit}
-                  onChange={(e) => handleTakeProfitChange(e.target.value)}
-                  placeholder="Optional"
-                  className={takeProfitError ? 'input-error' : ''}
-                />
-                {takeProfitError && (
-                  <span className="error-message">{takeProfitError}</span>
-                )}
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="stop-loss">Stop Loss</label>
-                <input
-                  id="stop-loss"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={stopLoss}
-                  onChange={(e) => handleStopLossChange(e.target.value)}
-                  placeholder="Optional"
-                  className={stopLossError ? 'input-error' : ''}
-                />
-                {stopLossError && (
-                  <span className="error-message">{stopLossError}</span>
-                )}
-              </div>
-            </div>
-            <div className="order-modal-field" style={{ marginTop: 18 }}>
-              <label>Tags (Press Enter or Click dropdown option to add)</label>
-              <input type="text" placeholder="Select tags" disabled />
-            </div>
-            <div className="order-modal-actions">
-              <button className="order-discard-btn" onClick={handleCloseBuyModal}>Discard</button>
-              <button className="order-save-btn" onClick={handlePlaceOrder}>Save</button>
-              <button className="order-save-journal-btn">Save & Journal</button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Sell Modal */}
-      {showSellModal && (
-        <div className="modal-overlay" onClick={handleCloseSellModal}>
-          <div
-            className="modal-content order-modal"
-            onClick={e => e.stopPropagation()}
-            style={{
-              position: 'absolute',
-              left: `calc(50% + ${sellModalDrag.position.x}px)` ,
-              top: `calc(50% + ${sellModalDrag.position.y}px)` ,
-              transform: 'translate(-50%, -50%)',
-              cursor: 'default',
-            }}
-          >
-            <div className="modal-header" style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 8 }}>
-              <div
-                className="modal-drag-bar"
-                onMouseDown={sellModalDrag.onMouseDown}
-                style={{
-                  width: '100%',
-                  height: 18,
-                  cursor: 'grab',
-                  background: 'linear-gradient(90deg, #23262F 60%, #23262F00)',
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 12,
-                  marginBottom: 6,
-                }}
-              />
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2 className="modal-title" style={{ margin: 0 }}>Place {orderSide} Order</h2>
-                <button className="modal-close-btn" onClick={handleCloseSellModal} aria-label="Close">&times;</button>
-              </div>
-            </div>
-            <div className="order-modal-row">
-              <div className="order-modal-field">
-                <label htmlFor="side-select">Side</label>
-                <select
-                  id="side-select"
-                  value={orderSide}
-                  onChange={(e) => handleOrderSideChange(e.target.value)}
-                >
-                  <option>Buy</option>
-                  <option>Sell</option>
-                </select>
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="type-select">Type</label>
-                <select
-                  id="type-select"
-                  value={orderType}
-                  onChange={(e) => handleOrderTypeChange(e.target.value)}
-                >
-                  <option>Limit</option>
-                  <option>Market</option>
-                </select>
-              </div>
-            </div>
-            <div className="order-modal-row">
-              <div className="order-modal-field">
-                <label htmlFor="position-size">Position Size (Lots)</label>
-                <input
-                  id="position-size"
-                  type="number"
-                  min="0"
-                  value={positionSize}
-                  onChange={(e) => handlePositionSizeChange(e.target.value)}
-                  className={positionSizeError ? 'input-error' : ''}
-                />
-                {positionSizeError && (
-                  <span className="error-message">{positionSizeError}</span>
-                )}
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="entry-price">Entry Price</label>
-                <input
-                  id="entry-price"
-                  type="number"
-                  min="0"
-                  value={entryPrice}
-                  onChange={(e) => handleEntryPriceChange(e.target.value)}
-                  readOnly={orderType === "Market"}
-                  className={entryPriceError ? 'input-error' : ''}
-                />
-                {entryPriceError && (
-                  <span className="error-message">{entryPriceError}</span>
-                )}
-              </div>
-            </div>
-            <div className="order-modal-toggle-row">
-              <div className="order-modal-field">
-                <label htmlFor="take-profit">Take Profit</label>
-                <input
-                  id="take-profit"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={takeProfit}
-                  onChange={(e) => handleTakeProfitChange(e.target.value)}
-                  placeholder="Optional"
-                  className={takeProfitError ? 'input-error' : ''}
-                />
-                {takeProfitError && (
-                  <span className="error-message">{takeProfitError}</span>
-                )}
-              </div>
-              <div className="order-modal-field">
-                <label htmlFor="stop-loss">Stop Loss</label>
-                <input
-                  id="stop-loss"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={stopLoss}
-                  onChange={(e) => handleStopLossChange(e.target.value)}
-                  placeholder="Optional"
-                  className={stopLossError ? 'input-error' : ''}
-                />
-                {stopLossError && (
-                  <span className="error-message">{stopLossError}</span>
-                )}
-              </div>
-            </div>
-            <div className="order-modal-field" style={{ marginTop: 18 }}>
-              <label>Tags (Press Enter or Click dropdown option to add)</label>
-              <input type="text" placeholder="Select tags" disabled />
-            </div>
-            <div className="order-modal-actions">
-              <button className="order-discard-btn" onClick={handleCloseSellModal}>Discard</button>
-              <button className="order-save-btn" onClick={handlePlaceOrder}>Save</button>
-              <button className="order-save-journal-btn">Save & Journal</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Order Modal */}
+      <OrderModal
+        open={orderModalOpen}
+        onClose={() => {
+          setOrderModalOpen(false);
+          setPositionSizeError("");
+          setEntryPriceError("");
+          setTakeProfitError("");
+          setStopLossError("");
+          setPositionSize('');
+          setEntryPrice('');
+          setTakeProfit('');
+          setStopLoss('');
+        }}
+        dragState={orderModalDrag}
+        orderSide={orderSide}
+        orderType={orderType}
+        positionSize={positionSize}
+        entryPrice={entryPrice}
+        takeProfit={takeProfit}
+        stopLoss={stopLoss}
+        positionSizeError={positionSizeError}
+        entryPriceError={entryPriceError}
+        takeProfitError={takeProfitError}
+        stopLossError={stopLossError}
+        onOrderSideChange={handleOrderSideChange}
+        onOrderTypeChange={handleOrderTypeChange}
+        onPositionSizeChange={handlePositionSizeChange}
+        onEntryPriceChange={handleEntryPriceChange}
+        onTakeProfitChange={handleTakeProfitChange}
+        onStopLossChange={handleStopLossChange}
+        onPlaceOrder={handlePlaceOrder}
+        onDiscard={() => {
+          setOrderModalOpen(false);
+          setPositionSizeError("");
+          setEntryPriceError("");
+          setTakeProfitError("");
+          setStopLossError("");
+          setPositionSize('');
+          setEntryPrice('');
+          setTakeProfit('');
+          setStopLoss('');
+        }}
+        onSaveJournal={() => {}}
+      />
 
       {/* Snackbar for notifications */}
       <Snackbar
