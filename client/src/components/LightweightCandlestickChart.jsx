@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, CandlestickSeries } from 'lightweight-charts';
+import { createChart, CandlestickSeries, LineSeries } from 'lightweight-charts';
 import '../styles/candlestick-chart.css';
 import { formatCandleTimestamp } from '../utils/dateUtils';
-import { getHoveredIndexAndPrev } from '../utils/chartUtils';
+import { getHoveredIndexAndPrev, calculateSMA, calculateEMA, calculateRSI, calculateMACD } from '../utils/chartUtils';
 
-const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takeProfit, stopLoss, limitOrders = [] }) => {
+const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takeProfit, stopLoss, limitOrders = [], selectedIndicator, indicatorData }) => {
   const chartContainerRef = useRef();
   const chartRef = useRef();
   const seriesRef = useRef();
+  const indicatorSeriesRef = useRef();
   const takeProfitLineRef = useRef();
   const stopLossLineRef = useRef();
   const limitOrderLineRefs = useRef({});
@@ -35,6 +36,18 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
       },
       timeScale: {
         borderColor: '#282B33',
+        tickMarkFormatter: (time) => {
+          // Handle both UNIX timestamp (number) and business day object
+          if (typeof time === 'number') {
+            return formatCandleTimestamp(time);
+          } else if (typeof time === 'object' && time !== null) {
+            // Convert business day to timestamp (assume UTC)
+            const { year, month, day } = time;
+            const date = new Date(Date.UTC(year, month - 1, day));
+            return formatCandleTimestamp(Math.floor(date.getTime() / 1000));
+          }
+          return '';
+        },
       },
     });
     seriesRef.current = chartRef.current.addSeries(CandlestickSeries, {
@@ -100,12 +113,13 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
   useEffect(() => {
     if (seriesRef.current && data && data.length > 0) {
       const formatted = data.map(d => ({
-        time: d.time || d.datetime || d.date || d.timestamp,
+        time: d.time, // Use only the UNIX timestamp (seconds)
         open: +d.open,
         high: +d.high,
         low: +d.low,
         close: +d.close,
       }));
+      // console.log('First candle sent to chart:', formatted[0]);
       seriesRef.current.setData(formatted);
     }
   }, [data]);
@@ -195,6 +209,58 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
     };
   }, [takeProfit, stopLoss, limitOrders]);
 
+  // Handle indicator display
+  useEffect(() => {
+    if (!chartRef.current || !data || data.length === 0) return;
+
+    try {
+      // Remove existing indicator series
+      if (indicatorSeriesRef.current) {
+        try {
+          chartRef.current.removeSeries(indicatorSeriesRef.current);
+        } catch (e) {
+          console.warn('Failed to remove existing indicator series:', e);
+        }
+        indicatorSeriesRef.current = null;
+      }
+
+      // Add new indicator series if selected
+      if (selectedIndicator && indicatorData && indicatorData.length > 0) {
+        // Get color from chart settings
+        const indicatorColor = chartSettings?.indicators?.[selectedIndicator]?.color || '#2962FF';
+        
+        indicatorSeriesRef.current = chartRef.current.addSeries(LineSeries, {
+          color: indicatorColor,
+          lineWidth: 2,
+          title: selectedIndicator.toUpperCase(),
+        });
+
+        indicatorSeriesRef.current.setData(indicatorData);
+      }
+    } catch (error) {
+      console.error('Error displaying indicator:', error);
+      // Clean up on error
+      if (indicatorSeriesRef.current) {
+        try {
+          chartRef.current.removeSeries(indicatorSeriesRef.current);
+        } catch (e) {}
+        indicatorSeriesRef.current = null;
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (chartRef.current && indicatorSeriesRef.current) {
+        try {
+          chartRef.current.removeSeries(indicatorSeriesRef.current);
+        } catch (e) {
+          console.warn('Failed to cleanup indicator series:', e);
+        }
+        indicatorSeriesRef.current = null;
+      }
+    };
+  }, [selectedIndicator, indicatorData, data, chartSettings]);
+
   return (
     <div style={{ position: 'relative', width: '100%', height }}>
       <div
@@ -202,16 +268,23 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
         className="lw-candlestick-chart-container"
         style={{ width: '100%', height }}
       />
-      {hoveredBar && (() => {
-        const upclose = hoveredBar.close > hoveredBar.open;
-        const { hoveredIndex, prevBar } = getHoveredIndexAndPrev(hoveredBar, data);
+      {((hoveredBar || (data && data.length > 0)) && (() => {
+        // Use hoveredBar if present, otherwise use last visible candle
+        const barToShow = hoveredBar || {
+          open: +data[data.length - 1].open,
+          high: +data[data.length - 1].high,
+          low: +data[data.length - 1].low,
+          close: +data[data.length - 1].close
+        };
+        const upclose = barToShow.close > barToShow.open;
+        const { hoveredIndex, prevBar } = getHoveredIndexAndPrev(barToShow, data);
         const prevClose = prevBar ? +prevBar.close : null;
-        const diff = prevClose !== null ? hoveredBar.close - prevClose : null;
+        const diff = prevClose !== null ? barToShow.close - prevClose : null;
         const percent = prevClose !== null ? (diff / prevClose) * 100 : null;
-        // Get the timestamp from the hovered bar in the data array
+        // Get the timestamp from the barToShow in the data array
         let timestamp = null;
         if (hoveredIndex !== -1 && data[hoveredIndex]) {
-          timestamp = data[hoveredIndex].time || data[hoveredIndex].datetime || data[hoveredIndex].date || data[hoveredIndex].timestamp;
+          timestamp = data[hoveredIndex].time;
         }
         return (
           <>
@@ -229,10 +302,10 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
               letterSpacing: 0.5,
               boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
             }}>
-              <span style={{color:'#fff'}}>O</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.open}</span> {' '}
-              <span style={{color:'#fff'}}>H</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.high}</span> {' '}
-              <span style={{color:'#fff'}}>L</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.low}</span> {' '}
-              <span style={{color:'#fff'}}>C</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{hoveredBar.close}</span>
+              <span style={{color:'#fff'}}>O</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{barToShow.open}</span> {' '}
+              <span style={{color:'#fff'}}>H</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{barToShow.high}</span> {' '}
+              <span style={{color:'#fff'}}>L</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{barToShow.low}</span> {' '}
+              <span style={{color:'#fff'}}>C</span> <span style={{color: upclose ? '#22c55e' : '#ef4444'}}>{barToShow.close}</span>
               {diff !== null && percent !== null && (
                 <span style={{color: upclose ? '#22c55e' : '#ef4444', marginLeft: 8}}>
                   {diff > 0 ? '+' : ''}{diff.toFixed(2)} ({percent > 0 ? '+' : ''}{percent.toFixed(2)}%)
@@ -259,7 +332,7 @@ const LightweightCandlestickChart = ({ data, height = 400, chartSettings, takePr
             )}
           </>
         );
-      })()}
+      })())}
     </div>
   );
 };

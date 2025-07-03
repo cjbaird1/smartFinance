@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import '../styles/education-center.css';
+import { useLocation } from 'react-router-dom';
 
 const toSlug = (str) => str.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '');
 
@@ -459,6 +460,17 @@ const educationTopics = [
 const EducationCenter = () => {
   // For sticky TOC
   const tocRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [location]);
 
   return (
     <div className="education-center-page">

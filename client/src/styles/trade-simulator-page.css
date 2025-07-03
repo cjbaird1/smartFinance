@@ -387,10 +387,21 @@
   overflow: hidden;
 }
 
+/* Fix this so that sizes are dynamic to screen sizes */
 .trade-history-header {
   display: grid;
-  grid-template-columns: 80px 80px 80px 120px 120px 100px 120px;
-  gap: 16px;
+  grid-template-columns:
+    60px   /* Trade # */
+    60px   /* Side */
+    60px   /* Size */
+    100px  /* Entry Price */
+    100px  /* Exit Price */
+    100px  /* Open Day */
+    100px  /* Close Day */
+    80px   /* Duration */
+    80px   /* P&L */
+    100px; /* Exit Reason */
+  gap: 12px;
   padding: 12px 16px;
   background: #23262F;
   font-weight: 600;
@@ -398,10 +409,21 @@
   font-size: 14px;
 }
 
+/* Fix this so that sizes are dynamic to screen sizes */
 .trade-history-row {
   display: grid;
-  grid-template-columns: 80px 80px 80px 120px 120px 100px 120px;
-  gap: 16px;
+  grid-template-columns:
+    60px   /* Trade # */
+    60px   /* Side */
+    60px   /* Size */
+    100px  /* Entry Price */
+    100px  /* Exit Price */
+    100px  /* Open Day */
+    100px  /* Close Day */
+    80px   /* Duration */
+    80px   /* P&L */
+    100px; /* Exit Reason */
+  gap: 12px;
   padding: 12px 16px;
   border-bottom: 1px solid #333;
   font-size: 14px;
@@ -427,4 +449,32 @@
 }
 .pending-cancel-btn:hover {
   color: var(--accent);
+}
+
+/* Custom scrollbar styles for modal content */
+.modal-scrollable-content {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1a1d24;
+}
+
+.modal-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-track {
+  background: #1a1d24;
+  border-radius: 4px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-corner {
+  background: #1a1d24;
 } 

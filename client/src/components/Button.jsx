@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/search-page.css';
 import '../styles/news-page.css';
-import './button-wave.css';
+// import './button-wave.css';
 
 /**
  * Reusable Button component for consistent styling across the app.

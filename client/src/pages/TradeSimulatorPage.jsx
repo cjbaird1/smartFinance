@@ -8,7 +8,9 @@ import { useTickerValidation } from '../hooks/useTickerValidation';
 import '../styles/trade-simulator-page.css';
 import '../styles/error-system.css';
 import { getCurrentClosingPrice, getCurrentCandlestick, shouldOrderBeFilled, calculatePL } from '../utils/tradeSimulator';
+import { calculateSMA, calculateEMA, calculateRSI, calculateMACD } from '../utils/chartUtils';
 import OrderModal from '../components/OrderModal';
+import Tooltip from '../components/Tooltip';
 
 const TIMEFRAMES = [
   { value: '1m', label: '1 Minute' },
@@ -24,6 +26,7 @@ const TIMEFRAMES = [
 
 // Default chart settings
 const defaultChartSettings = {
+  // Chart appearance settings
   showBody: true,
   showBorders: true,
   showWick: true,
@@ -35,6 +38,32 @@ const defaultChartSettings = {
   wickDown: '#ef5350',
   precision: 'default',
   timezone: 'UTC',
+  
+  // Indicator settings
+  indicators: {
+    sma: {
+      period: 20,
+      color: '#FF6B6B',
+      enabled: false
+    },
+    ema: {
+      period: 20,
+      color: '#4ECDC4',
+      enabled: false
+    },
+    rsi: {
+      period: 14,
+      color: '#45B7D1',
+      enabled: false
+    },
+    macd: {
+      fastPeriod: 12,
+      slowPeriod: 26,
+      signalPeriod: 9,
+      color: '#96CEB4',
+      enabled: false
+    }
+  }
 };
 
 // Custom hook for draggable modal
@@ -86,6 +115,14 @@ const TradeSimulatorPage = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [chartSettings, setChartSettings] = useState(defaultChartSettings);
   const playInterval = useRef(null);
+
+  // ML signals toggle state
+  const [showMlSignals, setShowMlSignals] = useState(false);
+  const handleToggleMlSignals = (checked) => setShowMlSignals(checked);
+
+  // Indicator state
+  const [selectedIndicator, setSelectedIndicator] = useState('');
+  const [indicatorData, setIndicatorData] = useState([]);
 
   // Unified order form state for both modals
   const [orderSide, setOrderSide] = useState("Buy");
@@ -516,6 +553,7 @@ const TradeSimulatorPage = () => {
       
       setStockData(data);
       setVisibleBars(1);
+     // console.log('First candle from backend:', data.data[0]);
     } catch (err) {
       if (!err.message.includes(`No Data Found for ticker symbol: "${ticker}"`)) {
         setError(err.message);
@@ -546,6 +584,98 @@ const TradeSimulatorPage = () => {
   };
 
   const currentTimeframeLabel = TIMEFRAMES.find(tf => tf.value === timeframe)?.label || timeframe;
+
+  // Calculate indicator data when selection changes
+  React.useEffect(() => {
+    if (!selectedIndicator || !stockData || !stockData.data || stockData.data.length === 0) {
+      setIndicatorData([]);
+      return;
+    }
+    try {
+      const data = stockData.data.slice(0, visibleBars);
+      let calculatedData = [];
+      switch (selectedIndicator) {
+        case 'sma':
+          calculatedData = calculateSMA(data, chartSettings.indicators.sma.period);
+          break;
+        case 'ema':
+          calculatedData = calculateEMA(data, chartSettings.indicators.ema.period);
+          break;
+        case 'rsi':
+          calculatedData = calculateRSI(data, chartSettings.indicators.rsi.period);
+          break;
+        case 'macd':
+          const macdData = calculateMACD(
+            data,
+            chartSettings.indicators.macd.fastPeriod,
+            chartSettings.indicators.macd.slowPeriod,
+            chartSettings.indicators.macd.signalPeriod
+          );
+          calculatedData = macdData.macdLine;
+          break;
+        default:
+          calculatedData = [];
+      }
+      setIndicatorData(calculatedData);
+    } catch (error) {
+      console.error('Error calculating indicator:', error);
+      setIndicatorData([]);
+      showSnackbar(`Failed to calculate ${selectedIndicator.toUpperCase()} indicator`, 'error');
+    }
+  }, [selectedIndicator, chartSettings, stockData, visibleBars]);
+
+  // Get the currently enabled indicator
+  const getEnabledIndicator = () => {
+    const indicators = chartSettings.indicators;
+    if (indicators.sma.enabled) return 'sma';
+    if (indicators.ema.enabled) return 'ema';
+    if (indicators.rsi.enabled) return 'rsi';
+    if (indicators.macd.enabled) return 'macd';
+    return '';
+  };
+
+  // Update indicator when settings change
+  React.useEffect(() => {
+    const enabledIndicator = getEnabledIndicator();
+    if (enabledIndicator !== selectedIndicator) {
+      setSelectedIndicator(enabledIndicator);
+    }
+  }, [chartSettings.indicators]);
+
+  // Handle quick indicator selection from dropdown
+  const handleQuickIndicatorSelect = (indicator) => {
+    setSelectedIndicator(indicator);
+    
+    if (!indicator) {
+      // Disable all indicators
+      const updatedSettings = {
+        ...chartSettings,
+        indicators: {
+          ...chartSettings.indicators,
+          sma: { ...chartSettings.indicators.sma, enabled: false },
+          ema: { ...chartSettings.indicators.ema, enabled: false },
+          rsi: { ...chartSettings.indicators.rsi, enabled: false },
+          macd: { ...chartSettings.indicators.macd, enabled: false }
+        }
+      };
+      setChartSettings(updatedSettings);
+      setIndicatorData([]);
+      return;
+    }
+
+    // Enable the selected indicator with default settings
+    const updatedSettings = {
+      ...chartSettings,
+      indicators: {
+        ...chartSettings.indicators,
+        sma: { ...chartSettings.indicators.sma, enabled: indicator === 'sma' },
+        ema: { ...chartSettings.indicators.ema, enabled: indicator === 'ema' },
+        rsi: { ...chartSettings.indicators.rsi, enabled: indicator === 'rsi' },
+        macd: { ...chartSettings.indicators.macd, enabled: indicator === 'macd' }
+      }
+    };
+    setChartSettings(updatedSettings);
+  };
 
   return (
     <div className="trade-simulator-page">
@@ -625,21 +755,25 @@ const TradeSimulatorPage = () => {
               currentTimeframe={currentTimeframeLabel}
               chartSettings={chartSettings}
               onChartSettingsChange={setChartSettings}
+              showMlSignals={showMlSignals}
+              onToggleMlSignals={handleToggleMlSignals}
+              selectedIndicator={selectedIndicator}
+              onIndicatorChange={setSelectedIndicator}
             />
           )}
           {stockData && stockData.data && stockData.data.length > 0 ? (
             <LightweightCandlestickChart
               data={stockData.data.slice(0, visibleBars).map(d => ({
                 ...d,
-                time: typeof d.time === 'number'
-                  ? d.time
-                  : Math.floor(new Date(d.time || d.datetime || d.date || d.timestamp).getTime() / 1000),
+                time: d.time, // Use backend-provided UNIX timestamp (seconds)
               }))}
               height={400}
               chartSettings={chartSettings}
               takeProfit={activePosition && activePosition.takeProfit > 0 ? activePosition.takeProfit : null}
               stopLoss={activePosition && activePosition.stopLoss > 0 ? activePosition.stopLoss : null}
               limitOrders={pendingOrders.filter(order => typeof order.entryPrice === 'number' && !isNaN(order.entryPrice)).map(order => ({ id: order.id, price: order.entryPrice }))}
+              selectedIndicator={selectedIndicator}
+              indicatorData={indicatorData}
             />
           ) : (
             <div className="chart-placeholder">Chart will appear here after you select a ticker.</div>
@@ -767,12 +901,14 @@ const TradeSimulatorPage = () => {
             <div>Active P&L: <span className={activePL > 0 ? 'pl-positive' : activePL < 0 ? 'pl-negative' : 'pl-neutral'}>
               ${activePL.toFixed(2)}
             </span></div>
-            <div>Total P&L: <span className={totalPL >= 0 ? 'pl-positive' : 'pl-negative'}>
-              ${totalPL.toFixed(2)}
+            <div>Net P&L: <span className={(totalPL - 10000) >= 0 ? 'pl-positive' : 'pl-negative'}>
+              ${(totalPL - 10000).toFixed(2)}
             </span></div>
             <div>Win Rate: <span className="pl-neutral">{calculateWinRate().toFixed(1)}%</span></div>
             <div>Total Trades: <span className="pl-neutral">{totalTrades}</span></div>
-            <div>Avg R/R: <span className="pl-neutral">{calculateAverageRR()}</span></div>
+            <Tooltip content="Average Risk-Reward">
+              <div>Avg R/R: <span className="pl-neutral">{calculateAverageRR()}</span></div>
+            </Tooltip>
           </div>
         </div>
       </div>

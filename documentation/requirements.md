@@ -24,7 +24,7 @@ This document outlines the functional requirements for each main page accessible
   - Support multiple chart types (e.g., candlestick, line, bar). DONE 
   - Allow users to apply technical indicators and overlays (e.g., moving averages, RSI). DONE (Partially there's ui bug w RSI)
   - Enable zooming, panning, and other chart interactions. DONE
-  - Provide options to customize chart appearance and settings.
+  - Provide options to customize chart appearance and settings. DONE (partially I have color settings for chart done.)
 
 ---
 
@@ -45,8 +45,8 @@ This document outlines the functional requirements for each main page accessible
 - **Requirements:**
   - Allow users to define or select trading strategies (e.g., moving average crossover).
   - Simulate strategy performance using historical price data.
-  - Display key performance metrics (e.g., returns, drawdown, win rate).
-  - Visualize trades and strategy outcomes on charts.
+  - Display key performance metrics (e.g., returns, drawdown, win rate). DONE
+  - Visualize trades and strategy outcomes on charts. DONE
   - Provide options to adjust strategy parameters and re-run tests.
 
 ---
@@ -61,8 +61,8 @@ This document outlines the functional requirements for each main page accessible
   - Present an overall sentiment summary and trend for the ticker. DONE 
   - Allow users to filter articles by sentiment type (All, Positive, Neutral, Negative). DONE 
   - Display articles ordered by sentiment (Positive, Neutral, Negative) when the 'All' filter is selected. DONE 
-  - The sentiment filter buttons should be integrated directly within the 'Latest News' collapsible header.
-  - **The sentiment filter buttons should only be visible when the 'Latest News' collapsible header is open, positioned to the right, above the first article.**
+  - The sentiment filter buttons should be integrated directly within the 'Latest News' collapsible header. DONE
+  - **The sentiment filter buttons should only be visible when the 'Latest News' collapsible header is open, positioned to the right, above the first article.** DONE
   - Provide a collapsible 'Sentiment Insights' section displaying:
     - Overall sentiment score and trend.
     - Distribution counts of positive, neutral, and negative articles.
@@ -74,10 +74,10 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Provide educational resources and tutorials on trading, investing, and platform usage.
 - **Requirements:**
-  - Organize content into topics and subtopics (e.g., technical analysis, trading terms).
-  - Present information in a clear, accessible format (text, images, diagrams).
-  - Include guides on using the platform's features.
-  - Allow users to browse and search educational content.
+  - Organize content into topics and subtopics (e.g., technical analysis, trading terms). DONE
+  - Present information in a clear, accessible format (text, images, diagrams). DONE
+  - Include guides on using the platform's features. DONE
+  - Allow users to browse and search educational content. DONE
 
 ---
 
