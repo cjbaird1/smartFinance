@@ -258,6 +258,14 @@
   padding: 0;
 }
 
+.sentiment.bullish > *, .sentiment.bearish > * {
+  color: #2c3e50;
+}
+
+.sentiment.bullish h4, .sentiment.bearish h4 {
+  color: #2c3e50;
+}
+
 .terms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -266,19 +274,19 @@
 }
 
 .term {
-  background: #f8f9fa;
+  background: var(--bg-main);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
 }
 
 .term h4 {
-  color: #fff;
+  color: var(--text-main);
   margin-bottom: 12px;
 }
 
 .term p {
-  color: #555;
+  color: var(--text-main);
   line-height: 1.6;
 }
 

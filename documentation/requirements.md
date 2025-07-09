@@ -43,8 +43,8 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Enable users to test trading strategies on historical data.
 - **Requirements:**
-  - Allow users to define or select trading strategies (e.g., moving average crossover).
-  - Simulate strategy performance using historical price data.
+  - Allow users to define or select trading strategies (e.g., moving average crossover). DONE
+  - Simulate strategy performance using historical price data. DONE
   - Display key performance metrics (e.g., returns, drawdown, win rate). DONE
   - Visualize trades and strategy outcomes on charts. DONE
   - Provide options to adjust strategy parameters and re-run tests.
