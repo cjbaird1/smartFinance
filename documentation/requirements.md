@@ -32,10 +32,16 @@ This document outlines the functional requirements for each main page accessible
 - **Purpose:**
   - Present machine learning or statistical predictions for stock price movement.
 - **Requirements:**
-  - Display predicted price trends or signals for selected tickers.
-  - Show model confidence or probability scores where applicable.
-  - Provide a clear disclaimer regarding the predictive nature and limitations.
-  - Allow users to compare predictions with actual historical data.
+  - Display predicted price trends or signals for selected tickers. DONE
+  - Show model confidence or probability scores where applicable. DONE
+  - Provide a clear disclaimer regarding the predictive nature and limitations. DONE
+  - Allow users to compare predictions with actual historical data. DONE
+  - **ML-Based Stock Movement Prediction (Bullish, Bearish, Neutral):**
+    - User inputs a ticker, and app returns a classification label (Neutral, Bullish, Bearish). DONE
+    - Verified by model output as well as visual display. DONE
+    - Uses technical indicators (RSI, MACD, moving averages, volatility, volume) for prediction. DONE
+    - Displays confidence scores and probability breakdowns. DONE
+    - Integrated into Trade Simulator page for educational purposes. DONE
 
 ---
 
