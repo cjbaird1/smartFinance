@@ -11,6 +11,7 @@ import { getCurrentClosingPrice, getCurrentCandlestick, shouldOrderBeFilled, cal
 import { calculateSMA, calculateEMA, calculateRSI, calculateMACD } from '../utils/chartUtils';
 import OrderModal from '../components/OrderModal';
 import Tooltip from '../components/Tooltip';
+import MlPrediction from '../components/MlPrediction';
 
 const TIMEFRAMES = [
   { value: '1m', label: '1 Minute' },
@@ -119,6 +120,9 @@ const TradeSimulatorPage = () => {
   // ML signals toggle state
   const [showMlSignals, setShowMlSignals] = useState(false);
   const handleToggleMlSignals = (checked) => setShowMlSignals(checked);
+  
+  // ML prediction state
+  const [mlPrediction, setMlPrediction] = useState(null);
 
   // Indicator state
   const [selectedIndicator, setSelectedIndicator] = useState('');
@@ -780,6 +784,12 @@ const TradeSimulatorPage = () => {
           )}
         </div>
         <div className="order-entry-panel">
+          {/* ML Prediction Component */}
+          <MlPrediction 
+            ticker={ticker}
+            timeframe={timeframe}
+            onPredictionUpdate={setMlPrediction}
+          />
           <h3>Order Entry</h3>
           <div style={{ display: 'flex', gap: '12px', marginBottom: 16 }}>
             <button
