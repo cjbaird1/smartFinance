@@ -1,0 +1,7 @@
+Okay for the requirements for this project. I am on this part: Section 2b: Stretch Requirements 
+1. ML-Based Stock Movement Prediction (Bullish, Bearish, Neutral) 
+● Success Measure: User inputs a ticker, and app returns a classification label 
+(Neutral, Bullish, Bearish) 
+● Demonstration: Verified by model output as well as visual display
+
+How can we implement this into our trading-simulator page? What might be the easiest way?

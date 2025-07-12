@@ -76,9 +76,10 @@ const PredictionsPage = () => {
     clearTickerError();
     
     if (value) {
-      const error = validateTicker(value);
-      if (error) {
-        handleTickerError(error);
+      const isValid = validateTicker(value);
+      if (!isValid) {
+        // validateTicker already sets the error via setTickerError
+        return;
       }
     }
   };
@@ -289,7 +290,7 @@ const PredictionsPage = () => {
                   </div>
                   <div className="info-item">
                     <span className="info-label">Features Used:</span>
-                    <span className="info-value">13 Technical Indicators</span>
+                    <span className="info-value">{selectedPrediction.feature_count || 17} Technical Indicators</span>
                   </div>
                   <div className="info-item">
                     <span className="info-label">Training Data:</span>

@@ -114,6 +114,7 @@ class StockMovementPredictor:
             return pd.DataFrame()
             
         df = pd.DataFrame(data)
+        df['open'] = pd.to_numeric(df['open'])
         df['close'] = pd.to_numeric(df['close'])
         df['high'] = pd.to_numeric(df['high'])
         df['low'] = pd.to_numeric(df['low'])
@@ -123,6 +124,12 @@ class StockMovementPredictor:
         df['price_change'] = df['close'].pct_change()
         df['price_change_5'] = df['close'].pct_change(5)
         df['price_change_10'] = df['close'].pct_change(10)
+        
+        # Open-Close relationship features
+        df['open_close_ratio'] = df['open'] / df['close']
+        df['body_size'] = abs(df['close'] - df['open']) / df['open']
+        df['gap_up'] = (df['open'] > df['close'].shift(1)).astype(int)
+        df['gap_down'] = (df['open'] < df['close'].shift(1)).astype(int)
         
         # Volatility
         df['volatility'] = df['price_change'].rolling(10).std()
@@ -198,6 +205,7 @@ class StockMovementPredictor:
             # Select features for training
             feature_columns = [
                 'price_change', 'price_change_5', 'price_change_10',
+                'open_close_ratio', 'body_size', 'gap_up', 'gap_down',
                 'volatility', 'price_vs_sma5', 'price_vs_sma10', 'price_vs_sma20',
                 'rsi', 'macd', 'macd_signal', 'macd_histogram',
                 'volume_ratio', 'bb_position'
@@ -251,6 +259,7 @@ class StockMovementPredictor:
             
             feature_columns = [
                 'price_change', 'price_change_5', 'price_change_10',
+                'open_close_ratio', 'body_size', 'gap_up', 'gap_down',
                 'volatility', 'price_vs_sma5', 'price_vs_sma10', 'price_vs_sma20',
                 'rsi', 'macd', 'macd_signal', 'macd_histogram',
                 'volume_ratio', 'bb_position'
@@ -292,6 +301,16 @@ class StockMovementPredictor:
                 'confidence': 0.0,
                 'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34}
             }
+    
+    def get_feature_columns(self):
+        """Return the list of feature columns used by the model"""
+        return [
+            'price_change', 'price_change_5', 'price_change_10',
+            'open_close_ratio', 'body_size', 'gap_up', 'gap_down',
+            'volatility', 'price_vs_sma5', 'price_vs_sma10', 'price_vs_sma20',
+            'rsi', 'macd', 'macd_signal', 'macd_histogram',
+            'volume_ratio', 'bb_position'
+        ]
 
 # Initialize the analyzers
 sentiment_analyzer = SentimentAnalyzer()
