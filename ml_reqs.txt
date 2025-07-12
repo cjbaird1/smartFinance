@@ -1,0 +1,500 @@
+# Dynamic ML Trading Model Builder - Requirements Document
+
+## 📋 PROJECT OVERVIEW
+
+**Goal:** Transform the current static ML prediction system into a dynamic, user-configurable trading model builder that allows retail traders to create, test, and deploy custom ML models for automated trading strategies.
+
+**Vision:** Users can select from a library of technical indicators, configure model parameters, train custom models, and backtest them in the trade simulator with automated buy/sell signals.
+
+---
+
+## 🎯 CORE FEATURES & REQUIREMENTS
+
+### 1. FEATURE SELECTION SYSTEM
+**Requirement:** Allow users to select which technical indicators to include in their ML model.
+
+**Requirements:**
+- [ ] Create feature registry with 20+ technical indicators
+- [ ] UI for feature selection (checkboxes, categories)
+- [ ] Real-time feature count display
+- [ ] Feature descriptions and educational content
+- [ ] Save/load feature configurations
+
+**Technical Indicators to Include:**
+- **Momentum:** RSI, MACD, Stochastic, Williams %R, CCI
+- **Trend:** SMA, EMA, ADX, Parabolic SAR, Ichimoku
+- **Volatility:** Bollinger Bands, ATR, Keltner Channels
+- **Volume:** OBV, Volume SMA, Money Flow Index
+- **Price Action:** Candlestick patterns, Support/Resistance
+- **Custom:** User-defined formulas
+
+### 2. MODEL CONFIGURATION SYSTEM
+**Requirement:** Allow users to configure ML algorithm and hyperparameters.
+
+**Requirements:**
+- [ ] Algorithm selection (Random Forest, XGBoost, Neural Networks)
+- [ ] Hyperparameter tuning interface
+- [ ] Model validation methods (cross-validation, walk-forward)
+- [ ] Prediction horizon configuration
+- [ ] Threshold settings for signal generation
+
+**Algorithms to Support:**
+- Random Forest (current)
+- XGBoost
+- Support Vector Machines
+- Neural Networks (simple MLP)
+- Ensemble Methods
+
+### 3. MODEL TRAINING & VALIDATION
+**Requirement:** Train user-configured models with proper validation.
+
+**Requirements:**
+- [ ] Async training with progress indicators
+- [ ] Model performance metrics display
+- [ ] Overfitting detection and warnings
+- [ ] Model comparison tools
+- [ ] Training data requirements validation
+
+**Performance Metrics:**
+- Accuracy, Precision, Recall, F1-Score
+- Confusion Matrix
+- Feature Importance
+- Training/Validation curves
+
+### 4. MODEL LIBRARY & MANAGEMENT
+**Requirement:** Save, organize, and manage user-created models.
+
+**Requirements:**
+- [ ] Model naming and categorization
+- [ ] Model versioning system
+- [ ] Model sharing capabilities
+- [ ] Model performance history
+- [ ] Model deletion and archiving
+
+### 5. ENHANCED BACKTESTING ENGINE
+**Requirement:** Integrate custom models into trade simulator with automated signals.
+
+**Requirements:**
+- [ ] Model selection in trade simulator
+- [ ] Automated buy/sell signal generation
+- [ ] Position sizing based on confidence
+- [ ] Risk management integration
+- [ ] Performance tracking and reporting
+
+**Backtesting Features:**
+- Equity curve visualization
+- Trade analysis and statistics
+- Risk metrics (Sharpe ratio, max drawdown)
+- Comparison with buy-and-hold strategy
+
+---
+
+## 📊 RESEARCH REQUIREMENTS
+
+### 1. TECHNICAL INDICATOR RESEARCH
+**Objective:** Identify the most popular and effective technical indicators used by retail traders.
+
+**Research Tasks:**
+- [ ] Survey popular trading platforms (TradingView, MetaTrader)
+- [ ] Analyze indicator usage in retail trading communities
+- [ ] Review academic papers on technical analysis effectiveness
+- [ ] Interview retail traders about their preferred indicators
+- [ ] Compile list of top 25-30 indicators with usage statistics
+
+**Research Sources:**
+- TradingView indicator library
+- MetaTrader indicator marketplace
+- Reddit r/algotrading, r/DayTrading
+- Academic databases (Google Scholar, ResearchGate)
+- Trading education websites
+
+### 2. ML ALGORITHM RESEARCH
+**Objective:** Determine the best ML algorithms for financial time series prediction.
+
+**Research Tasks:**
+- [ ] Review financial ML literature
+- [ ] Compare algorithm performance on stock prediction
+- [ ] Analyze computational requirements
+- [ ] Research ensemble methods for trading
+- [ ] Study overfitting prevention techniques
+
+**Key Papers to Review:**
+- "Machine Learning for Financial Markets" surveys
+- "Deep Learning for Time Series Forecasting"
+- "Ensemble Methods in Financial Prediction"
+
+### 3. USER EXPERIENCE RESEARCH
+**Objective:** Understand how retail traders want to interact with ML tools.
+
+**Research Tasks:**
+- [ ] Survey existing ML trading platform users
+- [ ] Analyze user feedback on similar products
+- [ ] Study user onboarding and education needs
+- [ ] Research risk tolerance and expectations
+- [ ] Identify common pain points in current solutions
+
+**Platforms to Study:**
+- Quantopian (now defunct but lessons learned)
+- Alpaca's ML features
+- TradingView's Pine Script
+- MetaTrader's Expert Advisors
+
+### 4. REGULATORY & COMPLIANCE RESEARCH
+**Objective:** Understand legal and regulatory requirements for ML trading tools.
+
+**Research Tasks:**
+- [ ] Review FINRA guidelines for automated trading
+- [ ] Study SEC regulations on investment advice
+- [ ] Research liability protection strategies
+- [ ] Analyze disclaimers and terms of service
+- [ ] Consult with legal experts if needed
+
+---
+
+## 🚧 IMPLEMENTATION PLAN
+
+### PHASE 1: FOUNDATION (Weeks 1-4)
+**Goal:** Build the core infrastructure for dynamic feature selection.
+
+**Week 1-2: Backend Infrastructure**
+- [ ] Create FeatureRegistry class
+- [ ] Implement feature calculation modularity
+- [ ] Add feature selection API endpoints
+- [ ] Create model configuration storage
+
+**Week 3-4: Frontend Foundation**
+- [ ] Build feature selection UI components
+- [ ] Create model configuration interface
+- [ ] Implement feature preview system
+- [ ] Add educational content for indicators
+
+**Deliverables:**
+- Users can select from 20+ technical indicators
+- Feature count updates dynamically
+- Basic model configuration interface
+
+### PHASE 2: MODEL BUILDING (Weeks 5-8)
+**Goal:** Enable users to train custom ML models.
+
+**Week 5-6: Model Training System**
+- [ ] Implement dynamic model training
+- [ ] Add algorithm selection
+- [ ] Create hyperparameter configuration
+- [ ] Build training progress indicators
+
+**Week 7-8: Model Validation**
+- [ ] Implement cross-validation
+- [ ] Add overfitting detection
+- [ ] Create model performance metrics
+- [ ] Build model comparison tools
+
+**Deliverables:**
+- Users can train custom models
+- Model performance validation
+- Model comparison capabilities
+
+### PHASE 3: MODEL MANAGEMENT (Weeks 9-12)
+**Goal:** Allow users to save, organize, and manage their models.
+
+**Week 9-10: Model Library**
+- [ ] Create model storage system
+- [ ] Build model library UI
+- [ ] Implement model versioning
+- [ ] Add model categorization
+
+**Week 11-12: Model Sharing**
+- [ ] Implement model sharing features
+- [ ] Create model marketplace foundation
+- [ ] Add model performance tracking
+- [ ] Build model analytics
+
+**Deliverables:**
+- Model library with organization
+- Model sharing capabilities
+- Performance tracking system
+
+### PHASE 4: INTEGRATION & BACKTESTING (Weeks 13-16)
+**Goal:** Integrate custom models into trade simulator with automated signals.
+
+**Week 13-14: Signal Generation**
+- [ ] Implement automated signal generation
+- [ ] Add position sizing logic
+- [ ] Create risk management rules
+- [ ] Build signal visualization
+
+**Week 15-16: Enhanced Backtesting**
+- [ ] Integrate models into trade simulator
+- [ ] Add performance analytics
+- [ ] Create equity curve visualization
+- [ ] Implement trade analysis
+
+**Deliverables:**
+- Automated trading signals
+- Enhanced backtesting engine
+- Performance analytics dashboard
+
+---
+
+## ⚠️ POTENTIAL BLOCKERS & CONCERNS
+
+### 1. TECHNICAL CHALLENGES
+
+**Overfitting & Model Reliability**
+- **Risk:** Users create models that work on historical data but fail in real trading
+- **Mitigation:** 
+  - Implement walk-forward analysis
+  - Add overfitting detection warnings
+  - Require minimum data requirements
+  - Provide educational content about overfitting
+
+**Computational Performance**
+- **Risk:** Model training becomes slow with many features/users
+- **Mitigation:**
+  - Implement async training
+  - Add model caching
+  - Consider cloud processing for heavy workloads
+  - Optimize feature calculations
+
+**Data Quality & Availability**
+- **Risk:** Insufficient or poor quality data for training
+- **Mitigation:**
+  - Implement data quality checks
+  - Add minimum data requirements
+  - Provide data source transparency
+  - Create data validation warnings
+
+### 2. USER EXPERIENCE CHALLENGES
+
+**Complexity Overload**
+- **Risk:** Users become overwhelmed by too many options
+- **Mitigation:**
+  - Create guided wizards
+  - Provide preset templates
+  - Add progressive disclosure
+  - Include educational tooltips
+
+**Unrealistic Expectations**
+- **Risk:** Users expect guaranteed profits from ML models
+- **Mitigation:**
+  - Clear disclaimers and warnings
+  - Educational content about ML limitations
+  - Realistic performance expectations
+  - Risk management education
+
+**Learning Curve**
+- **Risk:** Users struggle to understand ML concepts
+- **Mitigation:**
+  - Comprehensive tutorials
+  - Interactive learning modules
+  - Community support features
+  - Progressive skill building
+
+### 3. BUSINESS & REGULATORY CONCERNS
+
+**Liability & Legal Issues**
+- **Risk:** Users lose money and blame the platform
+- **Mitigation:**
+  - Clear terms of service
+  - Comprehensive disclaimers
+  - Educational focus positioning
+  - No real money trading (simulation only)
+
+**Regulatory Compliance**
+- **Risk:** Platform classified as investment advice
+- **Mitigation:**
+  - Educational focus
+  - No specific investment recommendations
+  - Clear "not financial advice" disclaimers
+  - Consult with legal experts
+
+**Scalability & Costs**
+- **Risk:** High computational costs with many users
+- **Mitigation:**
+  - Implement usage limits
+  - Consider freemium model
+  - Optimize resource usage
+  - Plan for cloud scaling
+
+### 4. MARKET & COMPETITION
+
+**Competition from Established Players**
+- **Risk:** Large platforms add similar features
+- **Mitigation:**
+  - Focus on educational differentiation
+  - Build strong community
+  - Create unique user experience
+  - Rapid iteration and improvement
+
+**Market Adoption**
+- **Risk:** Users don't adopt the feature
+- **Mitigation:**
+  - User research and feedback
+  - Beta testing with target users
+  - Iterative development
+  - Strong onboarding process
+
+---
+
+## 📈 SUCCESS METRICS
+
+### 1. USER ENGAGEMENT
+- [ ] 50% of users create at least one custom model
+- [ ] Average of 3 models created per active user
+- [ ] 70% user retention after model creation
+- [ ] 30% of users share models with others
+
+### 2. MODEL PERFORMANCE
+- [ ] Average model accuracy > 55% (better than random)
+- [ ] 80% of models pass overfitting detection
+- [ ] Average Sharpe ratio > 0.5 for backtested models
+- [ ] 60% of models show positive returns in backtesting
+
+### 3. PLATFORM GROWTH
+- [ ] 25% increase in user engagement time
+- [ ] 40% increase in trade simulator usage
+- [ ] 20% increase in user retention
+- [ ] 15% increase in premium conversions
+
+---
+
+## 🔧 TECHNICAL SPECIFICATIONS
+
+### BACKEND ARCHITECTURE
+```
+FeatureRegistry
+├── TechnicalIndicator (Base Class)
+│   ├── RSIIndicator
+│   ├── MACDIndicator
+│   └── BollingerBandsIndicator
+├── FeatureCalculator
+├── ModelTrainer
+└── ModelValidator
+
+DynamicMLModel
+├── AlgorithmFactory
+├── HyperparameterOptimizer
+├── ModelStorage
+└── PerformanceAnalyzer
+
+BacktestingEngine
+├── SignalGenerator
+├── PositionManager
+├── RiskManager
+└── PerformanceTracker
+```
+
+### FRONTEND ARCHITECTURE
+```
+ModelBuilder
+├── FeatureSelector
+├── AlgorithmConfigurator
+├── TrainingProgress
+└── ModelValidator
+
+ModelLibrary
+├── ModelCard
+├── ModelComparison
+├── PerformanceChart
+└── SharingInterface
+
+EnhancedTradeSimulator
+├── ModelSelector
+├── SignalDisplay
+├── AutoTrader
+└── PerformanceAnalytics
+```
+
+### DATABASE SCHEMA
+```sql
+-- Models table
+CREATE TABLE models (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    name VARCHAR(100),
+    description TEXT,
+    features JSONB,
+    algorithm VARCHAR(50),
+    hyperparameters JSONB,
+    performance_metrics JSONB,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Model versions table
+CREATE TABLE model_versions (
+    id SERIAL PRIMARY KEY,
+    model_id INTEGER REFERENCES models(id),
+    version INTEGER,
+    model_file_path VARCHAR(255),
+    training_data_hash VARCHAR(64),
+    created_at TIMESTAMP
+);
+
+-- Backtest results table
+CREATE TABLE backtest_results (
+    id SERIAL PRIMARY KEY,
+    model_id INTEGER REFERENCES models(id),
+    ticker VARCHAR(10),
+    timeframe VARCHAR(10),
+    start_date DATE,
+    end_date DATE,
+    results JSONB,
+    created_at TIMESTAMP
+);
+```
+
+---
+
+## 📚 EDUCATIONAL CONTENT REQUIREMENTS
+
+### 1. TECHNICAL INDICATOR EDUCATION
+- [ ] What each indicator measures
+- [ ] How to interpret indicator values
+- [ ] Common trading strategies using each indicator
+- [ ] Limitations and pitfalls of each indicator
+
+### 2. MACHINE LEARNING EDUCATION
+- [ ] Basic ML concepts for traders
+- [ ] Understanding model performance metrics
+- [ ] Overfitting and how to avoid it
+- [ ] Feature importance and selection
+
+### 3. RISK MANAGEMENT EDUCATION
+- [ ] Position sizing strategies
+- [ ] Stop-loss and take-profit concepts
+- [ ] Portfolio diversification
+- [ ] Risk vs. reward trade-offs
+
+### 4. BACKTESTING EDUCATION
+- [ ] Understanding backtest results
+- [ ] Walk-forward analysis importance
+- [ ] Out-of-sample testing
+- [ ] Realistic performance expectations
+
+---
+
+## 🎯 NEXT STEPS
+
+### IMMEDIATE (Next 2 Weeks)
+1. [ ] Complete research on top technical indicators
+2. [ ] Design database schema for model storage
+3. [ ] Create detailed UI/UX wireframes
+4. [ ] Set up development environment for Phase 1
+
+### SHORT TERM (Next Month)
+1. [ ] Implement FeatureRegistry system
+2. [ ] Build feature selection UI
+3. [ ] Create basic model configuration interface
+4. [ ] Test with 5-10 beta users
+
+### MEDIUM TERM (Next 3 Months)
+1. [ ] Complete Phase 1-2 implementation
+2. [ ] Launch beta version with limited users
+3. [ ] Gather user feedback and iterate
+4. [ ] Prepare for Phase 3-4 development
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** [7.12.25]  
+**Next Review:** [8.01.25]

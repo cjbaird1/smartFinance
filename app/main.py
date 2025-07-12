@@ -147,7 +147,7 @@ def predict_stock_movement():
             "probabilities": prediction_result["probabilities"],
             "model_trained": True,
             "feature_count": len(stock_predictor.get_feature_columns()),
-            "timeframe": timeframe,
+            "timeframe": interval_str,
             "prediction_horizon": 5
         })
 
