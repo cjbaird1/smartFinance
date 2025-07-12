@@ -146,7 +146,9 @@ def predict_stock_movement():
             "confidence": prediction_result["confidence"],
             "probabilities": prediction_result["probabilities"],
             "model_trained": True,
-            "feature_count": len(stock_predictor.get_feature_columns())
+            "feature_count": len(stock_predictor.get_feature_columns()),
+            "timeframe": timeframe,
+            "prediction_horizon": 5
         })
 
     except Exception as e:

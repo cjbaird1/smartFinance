@@ -298,7 +298,14 @@ const PredictionsPage = () => {
                   </div>
                   <div className="info-item">
                     <span className="info-label">Prediction Horizon:</span>
-                    <span className="info-value">5 Periods Ahead</span>
+                    <span className="info-value">
+                      {selectedPrediction.prediction_horizon || 5} {
+                        selectedPrediction.timeframe === '1d' ? 'Days' :
+                        selectedPrediction.timeframe === '1w' ? 'Weeks' :
+                        selectedPrediction.timeframe === '1M' ? 'Months' :
+                        'Periods'
+                      } Ahead
+                    </span>
                   </div>
                 </div>
               </div>
