@@ -1,0 +1,349 @@
+/* Feature Dictionary Modal Styles */
+.feature-dictionary-modal {
+  max-width: 900px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Search and Filter Section */
+.search-filter-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-container {
+  flex: 1;
+}
+
+.feature-search-input {
+  width: 100%;
+  min-width: 200px;
+}
+
+.filter-container {
+  min-width: 150px;
+}
+
+.category-filter {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.category-filter:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Features Table Container */
+.features-table-container {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--bg-main);
+}
+
+.features-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.features-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 10;
+}
+
+.features-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-panel);
+  white-space: nowrap;
+}
+
+.features-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+.features-table tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+.features-table .even-row {
+  background: var(--bg-main);
+}
+
+.features-table .odd-row {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Feature Name Column */
+.feature-name {
+  font-weight: 500;
+  min-width: 150px;
+}
+
+.feature-name span {
+  cursor: help;
+}
+
+/* Feature Value Column */
+.feature-value {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  min-width: 100px;
+  text-align: right;
+}
+
+.feature-value span {
+  cursor: help;
+}
+
+/* Feature Description Column */
+.feature-description {
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.feature-description span {
+  cursor: help;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Feature Category Column */
+.feature-category {
+  min-width: 100px;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.category-badge.category-momentum {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.category-badge.category-trend {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.category-badge.category-volatility {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+}
+
+.category-badge.category-volume {
+  background: rgba(156, 39, 176, 0.2);
+  color: #9c27b0;
+}
+
+.category-badge.category-price {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+.category-badge.category-unknown {
+  background: rgba(158, 158, 158, 0.2);
+  color: #9e9e9e;
+}
+
+/* Feature Learn More Column */
+.feature-learn-more {
+  min-width: 100px;
+  text-align: center;
+}
+
+.learn-more-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 80px;
+}
+
+.no-link {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 40px 16px;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.feature-count {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .feature-dictionary-modal {
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+
+  .search-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-container {
+    min-width: auto;
+  }
+
+  .features-table {
+    font-size: 12px;
+  }
+
+  .features-table th,
+  .features-table td {
+    padding: 8px 12px;
+  }
+
+  .feature-description {
+    max-width: 200px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .feature-count {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-navigation {
+    flex-direction: column;
+  }
+
+  .features-table-container {
+    overflow-x: auto;
+  }
+
+  .features-table {
+    min-width: 600px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .close-button,
+  .category-filter,
+  .features-table tbody tr {
+    transition: none;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.close-button:focus,
+.category-filter:focus,
+.learn-more-btn:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .features-table th {
+    border-bottom: 3px solid var(--text-primary);
+  }
+
+  .features-table td {
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .category-badge {
+    border: 1px solid currentColor;
+  }
+} 
