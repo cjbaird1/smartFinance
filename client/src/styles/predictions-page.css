@@ -548,4 +548,18 @@
   .prediction-label {
     font-size: 1rem;
   }
+}
+
+/* Features Section */
+.features-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.view-features-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 14px;
+  padding: 10px 16px;
 } 

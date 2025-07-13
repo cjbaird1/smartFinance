@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ValidatedInput from '../components/ValidatedInput';
+import Button from '../components/Button';
+import Tooltip from '../components/Tooltip';
+import FeatureDictionaryModal from '../components/FeatureDictionaryModal';
 import { useTickerValidation } from '../hooks/useTickerValidation';
+import { useFeatureDictionary } from '../hooks/useFeatureDictionary';
 import '../styles/predictions-page.css';
 
 const PredictionsPage = () => {
@@ -12,8 +16,14 @@ const PredictionsPage = () => {
   const [selectedPrediction, setSelectedPrediction] = useState(null);
   const [historicalPerformance, setHistoricalPerformance] = useState(null);
 
-  // Use the custom hook for ticker validation
+  // Use the custom hooks
   const { tickerError, validateTicker, handleTickerError, clearTickerError } = useTickerValidation();
+  const { 
+    allFeatures, 
+    showFeatureModal, 
+    openFeatureModal, 
+    closeFeatureModal 
+  } = useFeatureDictionary();
 
   const TIMEFRAMES = [
     { value: '1d', label: 'Daily' },
@@ -308,6 +318,19 @@ const PredictionsPage = () => {
                     </span>
                   </div>
                 </div>
+                
+                {/* View Features Button */}
+                <div className="features-section">
+                  <Tooltip content="See the data and indicators used for this prediction">
+                    <Button
+                      variant="search"
+                      onClick={openFeatureModal}
+                      className="view-features-btn"
+                    >
+                      View Features Used in Prediction
+                    </Button>
+                  </Tooltip>
+                </div>
               </div>
               
               <div className="technical-indicators">
@@ -381,10 +404,18 @@ const PredictionsPage = () => {
         <p>
           This machine learning model is for educational purposes only. The predictions are based on 
           historical technical analysis patterns and should not be considered as financial advice. 
-          Past performance does not guarantee future results. Always conduct your own research and 
+          Past performance does not guarantee future results.           Always conduct your own research and 
           consider consulting with a financial advisor before making investment decisions.
         </p>
       </div>
+
+      {/* Feature Dictionary Modal */}
+      <FeatureDictionaryModal
+        isOpen={showFeatureModal}
+        onClose={closeFeatureModal}
+        activeFeatures={selectedPrediction?.features || []}
+        allFeatures={allFeatures}
+      />
     </div>
   );
 };
