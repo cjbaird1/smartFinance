@@ -7,7 +7,7 @@ import {
   FEATURE_CATEGORIES, 
   filterFeatures 
 } from '../utils/featureMetadata';
-import '../styles/feature-dictionary-modal.css';
+import { COMPONENT_PATTERNS } from '../utils/tailwindMapping';
 
 const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatures = [] }) => {
   const [activeTab, setActiveTab] = useState('active');
@@ -29,11 +29,11 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
 
   return (
     <Modal onClose={onClose}>
-      <div className="feature-dictionary-modal">
-        <div className="modal-header">
-          <h2>Feature Dictionary</h2>
+      <div className="max-w-[900px] max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
+          <h2 className="m-0 text-text-main text-2xl font-semibold">Feature Dictionary</h2>
           <button 
-            className="close-button"
+            className="bg-transparent border-none text-text-muted text-2xl cursor-pointer p-1 rounded w-8 h-8 flex items-center justify-center hover:bg-white hover:bg-opacity-10 hover:text-text-main transition-all"
             onClick={onClose}
             aria-label="Close modal"
           >
@@ -42,7 +42,7 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
         </div>
 
         {/* Tab Navigation */}
-        <div className="tab-navigation">
+        <div className="flex gap-3 mb-5">
           <Button
             variant="indicator"
             active={activeTab === 'active'}
@@ -60,22 +60,22 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
         </div>
 
         {/* Search and Filter */}
-        <div className="search-filter-section">
-          <div className="search-container">
+        <div className="flex gap-4 mb-5 items-center">
+          <div className="flex-1">
             <ValidatedInput
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search features..."
-              className="feature-search-input"
+              className="w-full min-w-[200px]"
             />
           </div>
           
-          <div className="filter-container">
+          <div className="min-w-[150px]">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="category-filter"
+              className="w-full p-2 px-3 border border-border rounded-radius bg-bg-main text-text-main text-sm cursor-pointer transition-colors focus:outline-none focus:border-accent"
             >
               {FEATURE_CATEGORIES.map(category => (
                 <option key={category.value} value={category.value}>
@@ -94,8 +94,8 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
         />
 
         {/* Footer */}
-        <div className="modal-footer">
-          <p className="feature-count">
+        <div className="flex justify-between items-center mt-5 pt-4 border-t border-border">
+          <p className="m-0 text-text-muted text-sm">
             Showing {filteredFeatures.length} of {activeTab === 'active' ? activeFeatures.length : allFeatures.length} features
           </p>
           <Button variant="search" onClick={onClose}>
