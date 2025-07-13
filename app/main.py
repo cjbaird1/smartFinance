@@ -145,12 +145,36 @@ def predict_stock_movement():
             "prediction": prediction_result["prediction"],
             "confidence": prediction_result["confidence"],
             "probabilities": prediction_result["probabilities"],
+            "features": prediction_result.get("features", []),
             "model_trained": True,
             "feature_count": len(stock_predictor.get_feature_columns()),
             "timeframe": interval_str,
             "prediction_horizon": 5
         })
 
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route("/api/features", methods=["GET"])
+def get_all_features():
+    """Get all available features for the ML model"""
+    try:
+        feature_columns = stock_predictor.get_feature_columns()
+        
+        # Create feature objects with metadata
+        features = []
+        for feature_name in feature_columns:
+            features.append({
+                'name': feature_name,
+                'description': f'Technical indicator: {feature_name}',
+                'category': 'technical_analysis'
+            })
+        
+        return jsonify({
+            "features": features,
+            "total_count": len(features)
+        })
+        
     except Exception as e:
         return {"error": str(e)}, 500
 

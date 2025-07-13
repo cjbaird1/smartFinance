@@ -241,7 +241,8 @@ class StockMovementPredictor:
             return {
                 'prediction': 'Neutral',
                 'confidence': 0.0,
-                'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34}
+                'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34},
+                'features': []
             }
         
         try:
@@ -251,7 +252,8 @@ class StockMovementPredictor:
                 return {
                     'prediction': 'Neutral',
                     'confidence': 0.0,
-                    'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34}
+                    'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34},
+                    'features': []
                 }
             
             # Get latest data point
@@ -271,7 +273,8 @@ class StockMovementPredictor:
                 return {
                     'prediction': 'Neutral',
                     'confidence': 0.0,
-                    'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34}
+                    'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34},
+                    'features': []
                 }
             
             X = latest[feature_columns].values
@@ -288,10 +291,20 @@ class StockMovementPredictor:
             # Calculate confidence (max probability)
             confidence = float(max(probabilities))
             
+            # Extract feature values for the latest data point
+            features = []
+            for i, col in enumerate(feature_columns):
+                if col in latest.columns and not pd.isna(latest[col].iloc[0]):
+                    features.append({
+                        'name': col,
+                        'value': float(latest[col].iloc[0])
+                    })
+            
             return {
                 'prediction': prediction,
                 'confidence': confidence,
-                'probabilities': prob_dict
+                'probabilities': prob_dict,
+                'features': features
             }
             
         except Exception as e:
@@ -299,7 +312,8 @@ class StockMovementPredictor:
             return {
                 'prediction': 'Neutral',
                 'confidence': 0.0,
-                'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34}
+                'probabilities': {'Bullish': 0.33, 'Bearish': 0.33, 'Neutral': 0.34},
+                'features': []
             }
     
     def get_feature_columns(self):

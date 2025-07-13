@@ -50,7 +50,7 @@
 
 **Requirements:**
 - [ ] Async training with progress indicators
-- [ ] Model performance metrics display
+- [ ] Model performance metrics displayy
 - [ ] Overfitting detection and warnings
 - [ ] Model comparison tools
 - [ ] Training data requirements validation
