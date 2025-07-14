@@ -18,9 +18,10 @@ module.exports = {
         'accent-hover': '#1e40af',
         
         // Error system colors
-        'error': '#ef5350',
+        error: {
+          DEFAULT: '#ef5350',
+        },
         'error-bg': '#2d1a1a',
-        'error-text': '#ef5350',
         
         // ML Prediction colors
         'card-bg': '#23262F',
