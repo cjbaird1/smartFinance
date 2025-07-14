@@ -2,20 +2,8 @@
 
 /* Centralized Error System */
 
-/* Input Error States */
-.input-error {
-  border: var(--error-border) !important; /* Important means that these attributes will take priority for the element Even if other things try to overried */
-  outline: var(--error-outline) !important;
-  color: var(--error-text) !important;
-}
-
-/* Error Message Display */
-.error-message {
-  color: var(--error-text);
-  font-size: var(--error-font-size);
-  margin-top: var(--error-margin-top);
-  font-weight: 500;
-}
+/* Input Error States: now handled by Tailwind (text-error, border-error) */
+/* Error Message Display: now handled by Tailwind (text-error, font-medium, etc.) */
 
 /* Error Container for Input Fields */
 .input-container {
