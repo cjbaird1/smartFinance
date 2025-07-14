@@ -1,20 +1,15 @@
 @import './variables.css';
 
 .trade-simulator-page {
-  background: var(--bg-main);
-  min-height: 100vh;
-  width: 100%;
-  padding: 0;
-  color: var(--text-main);
+  /* Removed styles from the original .trade-simulator-page block */
 }
 
 .trade-simulator-page h2 {
-  margin-bottom: 24px;
-  color: var(--text-main);
+  /* Removed styles from the original .trade-simulator-page h2 block */
 }
 
 .simulator-controls {
-  margin-bottom: 24px;
+  /* Removed styles from the original .simulator-controls block */
 }
 
 .step-button {
@@ -35,82 +30,15 @@
 }
 
 .chart-placeholder {
-  background: var(--bg-panel);
-  border-radius: var(--radius);
-  padding: 48px 0;
-  box-shadow: var(--shadow);
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  font-size: 18px;
+  /* Removed styles from the original .chart-placeholder block */
 }
 
 .buy-btn {
-  background: #22c55e;
-  color: #fff;
-  border: none;
-  border-radius: 22px;
-  padding: 10px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px rgba(34,197,94,0.08);
+  /* Removed styles from the original .buy-btn block */
 }
-.buy-btn:hover {
-  background: #16a34a;
-}
-.buy-btn:disabled {
-  background: #6b7280;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.buy-btn:disabled:hover {
-  background: #6b7280;
-}
+
 .sell-btn {
-  background: #ef4444;
-  color: #fff;
-  border: none;
-  border-radius: 22px;
-  padding: 10px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px rgba(239,68,68,0.08);
-}
-.sell-btn:hover {
-  background: #b91c1c;
-}
-.sell-btn:disabled {
-  background: #6b7280;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.sell-btn:disabled:hover {
-  background: #6b7280;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.32);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px 28px 24px 28px;
-  min-width: 320px;
-  max-width: 90vw;
-  box-shadow: 0 8px 32px rgba(44,62,80,0.18);
-  position: relative;
-  text-align: center;
+  /* Removed styles from the original .sell-btn block */
 }
 
 .order-modal {
@@ -142,9 +70,6 @@
   z-index: 2;
   transition: color 0.18s;
 }
-.modal-close-btn:hover {
-  color: #ef4444;
-}
 .order-modal-row {
   display: flex;
   gap: 18px;
@@ -173,38 +98,16 @@
   outline: none;
   transition: border 0.18s;
 }
-.order-modal-field input:focus,
-.order-modal-field select:focus {
-  border: 1.5px solid #7c3aed;
-}
-
-/* Error states for form validation */
-.order-modal-field input.input-error {
-  border: 1.5px solid #ef4444;
-  background: #1a1d24;
-}
-
-.order-modal-field input.input-error:focus {
-  border: 1.5px solid #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-}
-
 .order-modal-field input[readonly] {
   background: #1a1d24;
   color: #888;
   cursor: not-allowed;
 }
-
-.order-modal-field input[readonly]:focus {
-  border: 1.5px solid #23262F;
-}
-
 .order-modal-toggle-row {
   display: flex;
   gap: 18px;
   margin-bottom: 18px;
 }
-
 .order-toggle-btn {
   padding: 8px 16px;
   border-radius: 6px;
@@ -215,13 +118,11 @@
   font-size: 0.9rem;
   transition: all 0.18s;
 }
-
 .order-toggle-btn.active {
   background: #7c3aed;
   color: #fff;
   border-color: #7c3aed;
 }
-
 .pro-badge {
   background: linear-gradient(45deg, #f59e0b, #f97316);
   color: #fff;
@@ -231,13 +132,11 @@
   font-weight: 600;
   margin-left: 8px;
 }
-
 .order-modal-actions {
   display: flex;
   gap: 12px;
   margin-top: 24px;
 }
-
 .order-discard-btn {
   padding: 10px 20px;
   border-radius: 8px;
@@ -248,12 +147,10 @@
   font-weight: 500;
   transition: all 0.18s;
 }
-
 .order-discard-btn:hover {
   background: #444;
   color: #fff;
 }
-
 .order-save-btn {
   padding: 10px 20px;
   border-radius: 8px;
@@ -264,11 +161,9 @@
   font-weight: 500;
   transition: background 0.18s;
 }
-
 .order-save-btn:hover {
   background: #6d28d9;
 }
-
 .order-save-journal-btn {
   padding: 10px 20px;
   border-radius: 8px;
@@ -279,30 +174,13 @@
   font-weight: 500;
   transition: background 0.18s;
 }
-
 .order-save-journal-btn:hover {
   background: #047857;
 }
-
-.modal-drag-bar {
-  width: 100%;
-  height: 18px;
-  cursor: grab;
-  background: linear-gradient(90deg, #23262F 60%, #23262F00);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  margin-bottom: 6px;
-}
-
-.modal-drag-bar:active {
-  cursor: grabbing;
-}
-
 .order-modal-field input.color-picker-square {
   border: 1px solid #444 !important;
   border-radius: 6px !important;
 }
-
 .color-picker-square {
   width: 45px;
   height: 45px;
@@ -313,168 +191,72 @@
   margin-right: 8px;
   display: inline-block;
 }
-
 .color-picker-square:hover, .color-picker-square:focus {
   border-color: #7c3aed !important;
 }
-
 .metrics-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1a1d24;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  border: 1px solid #333;
+  /* Removed styles from the original .metrics-bar block */
 }
-
 .metrics-bar > div {
-  font-size: 14px;
-  color: #aaa;
+  /* Removed styles from the original .metrics-bar > div block */
 }
-
 .metrics-bar .pl-positive {
-  color: #22c55e;
-  font-weight: 600;
+  /* Removed styles from the original .metrics-bar .pl-positive block */
 }
-
 .metrics-bar .pl-negative {
-  color: #ef4444;
-  font-weight: 600;
+  /* Removed styles from the original .metrics-bar .pl-negative block */
 }
-
 .metrics-bar .pl-neutral {
-  color: #f4f4f4;
-  font-weight: 500;
+  /* Removed styles from the original .metrics-bar .pl-neutral block */
 }
-
 .close-btn {
-  background: #6b7280;
-  color: #fff;
-  border: none;
-  border-radius: 22px;
-  padding: 10px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px rgba(107,114,128,0.08);
+  /* Removed styles from the original .close-btn block */
 }
-
-.close-btn:hover {
-  background: #4b5563;
-}
-
 .trade-history-section {
-  background: var(--bg-panel);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-top: 24px;
-  box-shadow: var(--shadow);
+  /* Removed styles from the original .trade-history-section block */
 }
-
 .trade-history-section h3 {
-  margin-bottom: 16px;
-  color: var(--text-main);
-  font-size: 1.2rem;
-  font-weight: 600;
+  /* Removed styles from the original .trade-history-section h3 block */
 }
-
 .trade-history-table {
-  background: #1a1d24;
-  border-radius: 8px;
-  overflow: hidden;
+  /* Removed styles from the original .trade-history-table block */
 }
-
 /* Fix this so that sizes are dynamic to screen sizes */
 .trade-history-header {
-  display: grid;
-  grid-template-columns:
-    60px   /* Trade # */
-    60px   /* Side */
-    60px   /* Size */
-    100px  /* Entry Price */
-    100px  /* Exit Price */
-    100px  /* Open Day */
-    100px  /* Close Day */
-    80px   /* Duration */
-    80px   /* P&L */
-    100px; /* Exit Reason */
-  gap: 12px;
-  padding: 12px 16px;
-  background: #23262F;
-  font-weight: 600;
-  color: #e5e7eb;
-  font-size: 14px;
+  /* Removed styles from the original .trade-history-header block */
 }
-
 /* Fix this so that sizes are dynamic to screen sizes */
 .trade-history-row {
-  display: grid;
-  grid-template-columns:
-    60px   /* Trade # */
-    60px   /* Side */
-    60px   /* Size */
-    100px  /* Entry Price */
-    100px  /* Exit Price */
-    100px  /* Open Day */
-    100px  /* Close Day */
-    80px   /* Duration */
-    80px   /* P&L */
-    100px; /* Exit Reason */
-  gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #333;
-  font-size: 14px;
-  color: #aaa;
+  /* Removed styles from the original .trade-history-row block */
 }
-
 .trade-history-row:nth-child(even) {
-  background: #1f2229;
+  /* Removed styles from the original .trade-history-row:nth-child(even) block */
 }
-
 .trade-history-row:hover {
-  background: #23262F;
+  /* Removed styles from the original .trade-history-row:hover block */
 }
-
 .pending-cancel-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 12px;
-  padding: 2px 6px;
-  transition: color 0.18s;
+  /* Removed styles from the original .pending-cancel-btn block */
 }
-.pending-cancel-btn:hover {
-  color: var(--accent);
-}
-
 /* Custom scrollbar styles for modal content */
 .modal-scrollable-content {
   scrollbar-width: thin;
   scrollbar-color: #555 #1a1d24;
 }
-
 .modal-scrollable-content::-webkit-scrollbar {
   width: 8px;
 }
-
 .modal-scrollable-content::-webkit-scrollbar-track {
   background: #1a1d24;
   border-radius: 4px;
 }
-
 .modal-scrollable-content::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 4px;
 }
-
 .modal-scrollable-content::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
-
 .modal-scrollable-content::-webkit-scrollbar-corner {
   background: #1a1d24;
 } 
