@@ -738,7 +738,7 @@ const TradeSimulatorPage = () => {
             min={1}
             max={999}
             placeholder="Number of Bars (Max 999)"
-            className={`nbars-input px-4 py-2 text-base border rounded-lg w-60 bg-bg-main text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent ${nBarsError ? 'border-error' : ''}`}
+            className={`px-4 py-2 text-base border rounded-lg w-60 bg-bg-main text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent ${nBarsError ? 'border-error' : ''}`}
           />
           {nBarsError && (
             <span className="error-message text-error text-sm mt-1">{nBarsError}</span>
@@ -926,12 +926,14 @@ const TradeSimulatorPage = () => {
               </Tooltip>
             </div>
           </div>
-          {/* ML Prediction Component (moved below order entry and metrics) */}
-          <MlPrediction 
-            ticker={ticker}
-            timeframe={timeframe}
-            onPredictionUpdate={setMlPrediction}
-          />
+          {/* ML Prediction Component: only render after valid stock data is loaded */}
+          {stockData && stockData.data && stockData.data.length > 0 && (
+            <MlPrediction 
+              ticker={ticker}
+              timeframe={timeframe}
+              onPredictionUpdate={setMlPrediction}
+            />
+          )}
         </div>
       </div>
 
