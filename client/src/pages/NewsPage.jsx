@@ -36,12 +36,11 @@ const NewsPage = () => {
   const [isSentimentInsightsOpen, setIsSentimentInsightsOpen] = useState(true);
 
   // Use the custom hook for ticker validation
-  const { tickerError, validateTicker, handleTickerError, clearTickerError } = useTickerValidation();
+  const { tickerError, validateTicker, handleTickerError, clearTickerError, setTickerError } = useTickerValidation();
 
   const fetchNewsAndSentiment = async (ticker) => {
     setLoading(true);
     setError(null);
-    clearTickerError();
     
     // Validate ticker using the custom hook
     if (!validateTicker(ticker)) {
@@ -63,15 +62,17 @@ const NewsPage = () => {
       }
       
       if (!data.articles || data.articles.length === 0) {
-        const msg = `No Data Found for ticker symbol: "${ticker}"`;
-        handleTickerError(msg, ticker);
+        setTickerError(`No Data Found for ticker symbol: "${ticker}"`);
         return;
       }
       
       setNewsData(data.articles || []);
       setSentimentData(data.sentiment_analysis || null);
     } catch (err) {
-      if (!err.message.includes(`No Data Found for ticker symbol: "${ticker}"`)) {
+      // If the ticker is valid format but fetch fails, show a user-facing error under the input
+      if (/^[A-Z]{1,5}$/.test(ticker)) {
+        setTickerError(`No Data Found for ticker symbol: "${ticker}"`);
+      } else {
         setError('Failed to fetch news and sentiment data');
       }
       console.error('Error fetching news:', err);
@@ -81,7 +82,8 @@ const NewsPage = () => {
   };
 
   const handleTickerChange = (e) => {
-    setSelectedTicker(e.target.value.toUpperCase());
+    const newTicker = e.target.value.toUpperCase();
+    setSelectedTicker(newTicker);
     clearTickerError();
   };
 
@@ -116,17 +118,17 @@ const NewsPage = () => {
     });
 
   return (
-    <div className="news-page">
-      <h2>News & Sentiment Analysis</h2>
-      
+    <div className="min-h-screen bg-bg-main text-text-main">
+      <h2 className="mb-6 text-text-main text-2xl font-semibold">News & Sentiment Analysis</h2>
       {/* Search Section */}
-      <div className="search-section">
+      <div className="flex flex-wrap gap-4 items-end bg-bg-panel p-4 rounded-xl shadow-shadow mb-8">
         <ValidatedInput
           type="text"
           value={selectedTicker}
           onChange={handleTickerChange}
           placeholder="Enter stock ticker (e.g. AAPL)"
           error={tickerError}
+          className="w-60"
         />
         <Button
           onClick={() => fetchNewsAndSentiment(selectedTicker)}
@@ -138,17 +140,19 @@ const NewsPage = () => {
         </Button>
       </div>
 
-    
       {/* News Section */}
-      <div className="news-section">
-        <h3 className="collapsible-header" onClick={() => setIsNewsSectionOpen(!isNewsSectionOpen)}>
-          Latest News
-          <span className={`collapse-icon ${isNewsSectionOpen ? 'open' : ''}`}>&#9660;</span>
+      <div className="bg-bg-panel rounded-xl shadow-shadow p-6 mb-8">
+        <h3
+          className="flex justify-between items-center cursor-pointer text-xl font-semibold mb-4 select-none"
+          onClick={() => setIsNewsSectionOpen(!isNewsSectionOpen)}
+        >
+          <span>Latest News</span>
+          <span className={`transition-transform duration-300 text-lg ${isNewsSectionOpen ? 'rotate-180' : ''}`}>&#9660;</span>
         </h3>
         {isNewsSectionOpen && (
           <>
-            <div className="filter-options-bar">
-              <div className="filter-bar">
+            <div className="flex flex-wrap gap-4 justify-between items-center mb-5">
+              <div className="flex gap-2 flex-wrap">
                 {sentimentTypes.map(type => (
                   <Button
                     key={type.value}
@@ -161,18 +165,18 @@ const NewsPage = () => {
                   </Button>
                 ))}
               </div>
-              <div className="date-filter">
+              <div className="flex items-center">
                 <DateRangePicker
                   startDate={startDate}
                   endDate={endDate}
                   onStartDateChange={setStartDate}
                   onEndDateChange={setEndDate}
-                  className="news-date-picker"
+                  className="min-w-[220px] md:min-w-[300px]"
                 />
               </div>
             </div>
             {filteredNews.length === 0 ? (
-              <p className="empty-state">No articles found for this filter.</p>
+              <p className="text-text-muted italic">No articles found for this filter.</p>
             ) : (
               <div>
                 {filteredNews.map((article, index) => (
@@ -185,14 +189,17 @@ const NewsPage = () => {
       </div>
 
       {/* Sentiment Analysis Section */}
-      <div className="sentiment-section">
-        <h3 className="collapsible-header" onClick={() => setIsSentimentSectionOpen(!isSentimentSectionOpen)}>
-          Sentiment Analysis
-          <span className={`collapse-icon ${isSentimentSectionOpen ? 'open' : ''}`}>&#9660;</span>
+      <div className="bg-bg-panel rounded-xl shadow-shadow p-6 mb-8">
+        <h3
+          className="flex justify-between items-center cursor-pointer text-xl font-semibold mb-4 select-none"
+          onClick={() => setIsSentimentSectionOpen(!isSentimentSectionOpen)}
+        >
+          <span>Sentiment Analysis</span>
+          <span className={`transition-transform duration-300 text-lg ${isSentimentSectionOpen ? 'rotate-180' : ''}`}>&#9660;</span>
         </h3>
         {isSentimentSectionOpen && (
           !sentimentData ? (
-            <p className="empty-state">Enter a ticker symbol to view sentiment analysis</p>
+            <p className="text-text-muted italic">Enter a ticker symbol to view sentiment analysis</p>
           ) : (
             <SentimentAnalysis data={sentimentData} />
           )
@@ -200,7 +207,7 @@ const NewsPage = () => {
       </div>
 
       {error && (
-        <div className="error-message">
+        <div className="bg-[#2d1a1a] text-error mt-4 p-3 rounded-lg font-medium">
           {error}
         </div>
       )}
