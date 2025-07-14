@@ -17,16 +17,6 @@
   flex-direction: column;
 }
 
-.nbars-input {
-  padding: 10px 14px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  width: 240px;
-  background: var(--bg-main);
-  color: var(--text-main);
-}
-
 .chart-controls-layout {
   display: flex;
   flex-direction: row;
