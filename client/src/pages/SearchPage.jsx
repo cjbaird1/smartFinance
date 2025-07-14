@@ -114,9 +114,9 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="search-page">
-      <h2>Search a Ticker</h2>
-      <form onSubmit={fetchStockData} className="search-form">
+    <div className="search-page bg-bg-main min-h-screen w-full text-text-main">
+      <h2 className="mb-6 text-text-main text-2xl font-semibold">Search a Ticker</h2>
+      <form onSubmit={fetchStockData} className="search-form flex gap-4 items-start mb-8 bg-bg-panel p-6 rounded-radius shadow-shadow flex-wrap">
         <ValidatedInput
           type="text"
           value={ticker}
@@ -127,7 +127,7 @@ const SearchPage = () => {
         <select
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
-          className="timeframe-select"
+          className="timeframe-select px-4 py-2 bg-bg-main text-text-main border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
         >
           {TIMEFRAMES.map((tf) => (
             <option key={tf.value} value={tf.value}>
@@ -135,7 +135,7 @@ const SearchPage = () => {
             </option>
           ))}
         </select>
-        <div className="nbars-input-container">
+        <div className="nbars-input-container flex flex-col flex-shrink-0">
           <input
             id="nBarsInput"
             type="number"
@@ -156,15 +156,15 @@ const SearchPage = () => {
             min={1}
             max={999}
             placeholder="Number of Bars (Max 999)"
-            className={`nbars-input ${nBarsError ? 'input-error' : ''}`}
+            className={`nbars-input px-4 py-2 text-base border rounded-lg w-60 bg-bg-main text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent ${nBarsError ? 'border-error' : ''}`}
           />
           {nBarsError && (
-            <span className="error-message">{nBarsError}</span>
+            <span className="error-message text-error text-sm mt-1">{nBarsError}</span>
           )}
         </div>
         <button
           type="submit"
-          className="search-button"
+          className="search-button px-6 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           disabled={loading}
         >
           {loading ? "Loading..." : "Get Data"}
@@ -177,15 +177,15 @@ const SearchPage = () => {
         type="error"
       />
       {stockData && stockData.data && stockData.data.length > 0 && (
-        <div className="chart-duo-container">
-          <div className="chart-duo-item">
+        <div className="chart-duo-container flex gap-8 mb-6 flex-wrap">
+          <div className="chart-duo-item flex-1 min-w-80 max-w-1/2 flex flex-col">
             {chartType === "candlestick" ? (
               <CandlestickChart data={stockData.data} highlightAfterHours={highlightAfterHours} indicators={selectedIndicators} />
             ) : (
               <LineChart data={stockData.data} indicators={selectedIndicators} />
             )}
           </div>
-          <div className="chart-duo-item">
+          <div className="chart-duo-item flex-1 min-w-80 max-w-1/2 flex flex-col">
             <LightweightCandlestickChart data={stockData.data.map(d => ({
               ...d,
               time: typeof d.time === 'number'

@@ -10,8 +10,8 @@ const ValidatedInput = ({
   containerClassName = '',
   ...props
 }) => {
-  const inputClasses = `search-input ${error ? 'input-error' : ''} ${className}`;
-  const containerClasses = `input-container ${containerClassName}`;
+  const inputClasses = `search-input px-4 py-2 text-base border rounded-lg w-60 bg-bg-main text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent ${error ? 'border-error' : ''} ${className}`;
+  const containerClasses = `input-container flex flex-col flex-shrink-0 ${containerClassName}`;
 
   return (
     <div className={containerClasses}>
@@ -24,7 +24,7 @@ const ValidatedInput = ({
         {...props}
       />
       {error && (
-        <span className="error-message">{error}</span>
+        <span className="error-message text-error text-sm mt-1">{error}</span>
       )}
     </div>
   );
