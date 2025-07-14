@@ -681,10 +681,24 @@ const TradeSimulatorPage = () => {
     setChartSettings(updatedSettings);
   };
 
+  // Helper to format UNIX timestamp or date string
+  function formatDate(val) {
+    if (!val) return '-';
+    // If it's a number or numeric string, treat as UNIX timestamp (seconds)
+    const num = typeof val === 'string' ? Number(val) : val;
+    if (!isNaN(num) && num > 1000000000 && num < 5000000000) {
+      // Likely a UNIX timestamp in seconds
+      const d = new Date(num * 1000);
+      return d.toLocaleDateString();
+    }
+    // Otherwise, return as is
+    return val;
+  }
+
   return (
-    <div className="trade-simulator-page">
-      <h2>Trade Simulator</h2>
-      <form onSubmit={fetchStockData} className="search-form">
+    <div className="trade-simulator-page bg-bg-main min-h-screen w-full text-text-main">
+      <h2 className="mb-6 text-text-main text-2xl font-semibold">Trade Simulator</h2>
+      <form onSubmit={fetchStockData} className="search-form flex gap-4 items-start mb-8 bg-bg-panel p-6 rounded-radius shadow-shadow flex-wrap">
         <ValidatedInput
           type="text"
           value={ticker}
@@ -695,7 +709,7 @@ const TradeSimulatorPage = () => {
         <select
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
-          className="timeframe-select"
+          className="timeframe-select px-4 py-2 bg-bg-main text-text-main border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
         >
           {TIMEFRAMES.map((tf) => (
             <option key={tf.value} value={tf.value}>
@@ -703,7 +717,7 @@ const TradeSimulatorPage = () => {
             </option>
           ))}
         </select>
-        <div className="nbars-input-container">
+        <div className="nbars-input-container flex flex-col flex-shrink-0">
           <input
             id="nBarsInput"
             type="number"
@@ -724,27 +738,27 @@ const TradeSimulatorPage = () => {
             min={1}
             max={999}
             placeholder="Number of Bars (Max 999)"
-            className={`nbars-input ${nBarsError ? 'input-error' : ''}`}
+            className={`nbars-input px-4 py-2 text-base border rounded-lg w-60 bg-bg-main text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent ${nBarsError ? 'border-error' : ''}`}
           />
           {nBarsError && (
-            <span className="error-message">{nBarsError}</span>
+            <span className="error-message text-error text-sm mt-1">{nBarsError}</span>
           )}
         </div>
         <button
           type="submit"
-          className="search-button"
+          className="search-button px-6 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           disabled={loading}
         >
           {loading ? "Loading..." : "Get Data"}
         </button>
       </form>
       {error && (
-        <div className="error-message" style={{ marginBottom: 24, fontWeight: 500 }}>
+        <div className="error-message text-error text-base font-medium mb-6">
           {error}
         </div>
       )}
       {/* Main content row: chart and order entry panel */}
-      <div className="simulator-main-row">
+      <div className="simulator-main-row flex flex-col gap-6">
         <div className="chart-section" style={{ position: 'relative' }}>
           {/* Chart Toolbar above chart */}
           {stockData && stockData.data && stockData.data.length > 0 && (
@@ -780,20 +794,14 @@ const TradeSimulatorPage = () => {
               indicatorData={indicatorData}
             />
           ) : (
-            <div className="chart-placeholder">Chart will appear here after you select a ticker.</div>
+            <div className="chart-placeholder bg-bg-panel rounded-radius p-12 shadow-shadow min-h-80 flex items-center justify-center text-text-muted text-lg">Chart will appear here after you select a ticker.</div>
           )}
         </div>
-        <div className="order-entry-panel">
-          {/* ML Prediction Component */}
-          <MlPrediction 
-            ticker={ticker}
-            timeframe={timeframe}
-            onPredictionUpdate={setMlPrediction}
-          />
-          <h3>Order Entry</h3>
-          <div style={{ display: 'flex', gap: '12px', marginBottom: 16 }}>
+        <div className="order-entry-panel bg-bg-panel rounded-radius p-6 shadow-shadow">
+          <h3 className="text-text-main text-xl font-semibold mb-4">Order Entry</h3>
+          <div className="flex gap-3 mb-4">
             <button
-              className="buy-btn"
+              className="buy-btn bg-green-500 text-white border-none rounded-full px-7 py-2 text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg hover:bg-green-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
               onClick={() => {
                 setOrderSide("Buy");
                 setOrderModalOpen(true);
@@ -814,7 +822,7 @@ const TradeSimulatorPage = () => {
               Buy
             </button>
             <button
-              className="sell-btn"
+              className="sell-btn bg-red-500 text-white border-none rounded-full px-7 py-2 text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg hover:bg-red-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
               onClick={() => {
                 setOrderSide("Sell");
                 setOrderModalOpen(true);
@@ -836,7 +844,7 @@ const TradeSimulatorPage = () => {
             </button>
             {activePosition && (
               <button
-                className="close-btn"
+                className="close-btn bg-yellow-500 text-white border-none rounded-full px-4 py-2 text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg hover:bg-yellow-600"
                 onClick={handleClosePosition}
               >
                 Close Position
@@ -844,19 +852,13 @@ const TradeSimulatorPage = () => {
             )}
           </div>
           {activePosition && (
-            <div style={{ 
-              background: 'var(--bg-panel)', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              marginBottom: '16px',
-              border: '1px solid var(--border)'
-            }}>
-              <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Position:</div>
-              <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
+            <div className="bg-bg-panel p-3 rounded-lg mb-4 border border-border">
+              <div className="text-sm text-text-muted mb-1">Active Position:</div>
+              <div className="text-base font-semibold mb-2">
                 {activePosition.side} {activePosition.size} lot(s) @ ${activePosition.entryPrice.toFixed(2)}
               </div>
               {(activePosition.takeProfit > 0 || activePosition.stopLoss > 0) && (
-                <div style={{ fontSize: '12px', color: '#888' }}>
+                <div className="text-xs text-gray-400">
                   {activePosition.takeProfit > 0 && (
                     <div>Take Profit: ${activePosition.takeProfit.toFixed(2)}</div>
                   )}
@@ -869,35 +871,24 @@ const TradeSimulatorPage = () => {
           )}
           {/* Pending Orders Section */}
           {pendingOrders.length > 0 && (
-            <div style={{ 
-              background: 'var(--bg-panel)', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              marginBottom: '16px',
-              border: '1px solid var(--border)'
-            }}>
-              <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Pending Orders:</div>
+            <div className="bg-bg-panel p-3 rounded-lg mb-4 border border-border">
+              <div className="text-sm text-text-muted mb-2">Pending Orders:</div>
               {pendingOrders.map((order, index) => (
-                <div key={order.id} style={{ 
-                  fontSize: '14px', 
-                  marginBottom: '4px',
-                  padding: '6px 8px',
-                  background: 'var(--bg-panel)',
-                  borderRadius: '4px',
-                  border: '1px solid var(--border)'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ 
-                      color: order.side === 'Buy' ? '#22c55e' : 'var(--error-color)',
-                      fontWeight: '600'
-                    }}>
+                <div
+                  key={order.id}
+                  className="text-sm mb-1 p-2 bg-bg-panel rounded border border-border"
+                >
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${order.side === 'Buy' ? 'text-green-500' : 'text-error'}`}
+                    >
                       {order.side} {order.size} lot(s) @ ${order.entryPrice.toFixed(2)}
                     </span>
                     <button
                       onClick={() => {
                         cancelPendingOrder(order.id);
                       }}
-                      className="pending-cancel-btn"
+                      className="pending-cancel-btn text-xs text-error hover:underline ml-4"
                     >
                       Cancel Order
                     </button>
@@ -907,69 +898,92 @@ const TradeSimulatorPage = () => {
             </div>
           )}
           {/* Trading Metrics */}
-          <div className="metrics-bar">
-            <div>Active P&L: <span className={activePL > 0 ? 'pl-positive' : activePL < 0 ? 'pl-negative' : 'pl-neutral'}>
-              ${activePL.toFixed(2)}
-            </span></div>
-            <div>Net P&L: <span className={(totalPL - 10000) >= 0 ? 'pl-positive' : 'pl-negative'}>
-              ${(totalPL - 10000).toFixed(2)}
-            </span></div>
-            <div>Win Rate: <span className="pl-neutral">{calculateWinRate().toFixed(1)}%</span></div>
-            <div>Total Trades: <span className="pl-neutral">{totalTrades}</span></div>
-            <Tooltip content="Average Risk-Reward">
-              <div>Avg R/R: <span className="pl-neutral">{calculateAverageRR()}</span></div>
-            </Tooltip>
+          <div className="flex flex-wrap justify-between items-center gap-x-8 gap-y-2 bg-[#23262F] p-3 rounded-[8px] mt-4 border border-[#333] text-[14px]">
+            <div>
+              <span className="text-[#A0A4AE] font-medium">Active P&L: </span>
+              <span className={activePL > 0 ? 'text-[#22c55e] font-semibold text-base' : activePL < 0 ? 'text-[#ef4444] font-semibold text-base' : 'text-[#f4f4f4] font-semibold text-base'}>
+                ${activePL.toFixed(2)}
+              </span>
+            </div>
+            <div className="border-l border-[#333] pl-6">
+              <span className="text-[#A0A4AE] font-medium">Net P&L: </span>
+              <span className={(totalPL - 10000) >= 0 ? 'text-[#22c55e] font-semibold text-base' : 'text-[#ef4444] font-semibold text-base'}>
+                ${(totalPL - 10000).toFixed(2)}
+              </span>
+            </div>
+            <div className="border-l border-[#333] pl-6">
+              <span className="text-[#A0A4AE] font-medium">Win Rate: </span>
+              <span className="text-[#f4f4f4] font-semibold text-base">{calculateWinRate().toFixed(1)}%</span>
+            </div>
+            <div className="border-l border-[#333] pl-6">
+              <span className="text-[#A0A4AE] font-medium">Total Trades: </span>
+              <span className="text-[#f4f4f4] font-semibold text-base">{totalTrades}</span>
+            </div>
+            <div className="border-l border-[#333] pl-6">
+              <Tooltip content="Average Risk-Reward">
+                <span className="text-[#A0A4AE] font-medium">Avg R/R: </span>
+                <span className="text-[#f4f4f4] font-semibold text-base">{calculateAverageRR()}</span>
+              </Tooltip>
+            </div>
           </div>
+          {/* ML Prediction Component (moved below order entry and metrics) */}
+          <MlPrediction 
+            ticker={ticker}
+            timeframe={timeframe}
+            onPredictionUpdate={setMlPrediction}
+          />
         </div>
       </div>
 
       {/* Trade History Section */}
       {tradeHistory.length > 0 && (
         <div className="trade-history-section">
-          <h3>Trade History</h3>
-          <div style={{ 
-            background: 'var(--bg-panel)', 
-            padding: '12px 16px', 
-            borderRadius: '8px', 
-            marginBottom: '16px',
-            border: '1px solid var(--border)',
-            fontSize: '14px',
-            color: 'var(--text-muted)'
-          }}>
-            Starting Balance: $10,000.00 | Current Balance: ${totalPL.toFixed(2)} | 
-            Net P&L: <span className={totalPL >= 10000 ? 'pl-positive' : 'pl-negative'}>
-              ${(totalPL - 10000).toFixed(2)}
-            </span>
-          </div>
-          <div className="trade-history-table">
-            <div className="trade-history-header">
-              <div>Trade #</div>
-              <div>Side</div>
-              <div>Size</div>
-              <div>Entry Price</div>
-              <div>Exit Price</div>
-              <div>Open Day</div>
-              <div>Close Day</div>
-              <div>Duration</div>
-              <div>P&L</div>
-              <div>Exit Reason</div>
+          <h3 className="text-xl font-semibold mb-3">Trade History</h3>
+          <div className="bg-bg-panel p-3 rounded-lg mb-4 border border-border flex flex-wrap gap-x-8 gap-y-2 text-sm">
+            <div>
+              <span className="text-[#A0A4AE] font-medium">Starting Balance: </span>
+              <span className="text-[#f4f4f4] font-semibold text-base">$10,000.00</span>
             </div>
-            {tradeHistory.map((trade, index) => (
-              <div key={trade.id} className="trade-history-row">
-                <div>{index + 1}</div>
-                <div>{trade.side}</div>
-                <div>{trade.size}</div>
-                <div>${trade.entryPrice.toFixed(2)}</div>
-                <div>${trade.exitPrice.toFixed(2)}</div>
-                <div>{trade.openDate ? trade.openDate : '-'}</div>
-                <div>{trade.closeDate ? trade.closeDate : '-'}</div>
-                <div>{trade.duration !== null && trade.duration !== undefined ? trade.duration : '-'}</div>
-                <div className={trade.finalPL > 0 ? 'pl-positive' : 'pl-negative'}>
-                  ${trade.finalPL.toFixed(2)}
-                </div>
-                <div>{trade.closeReason || 'Manual'}</div>
+            <div className="border-l border-[#333] pl-6">
+              <span className="text-[#A0A4AE] font-medium">Current Balance: </span>
+              <span className="text-[#f4f4f4] font-semibold text-base">${totalPL.toFixed(2)}</span>
+            </div>
+            <div className="border-l border-[#333] pl-6">
+              <span className="text-[#A0A4AE] font-medium">Net P&L: </span>
+              <span className={totalPL >= 10000 ? 'text-[#22c55e] font-semibold text-base' : 'text-[#ef4444] font-semibold text-base'}>
+                ${(totalPL - 10000).toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[800px]">
+              <div className="flex font-semibold bg-bg-panel border-b border-border py-2 px-2 text-text-main">
+                <div className="w-16">Trade #</div>
+                <div className="w-16">Side</div>
+                <div className="w-16">Size</div>
+                <div className="w-28">Entry Price</div>
+                <div className="w-28">Exit Price</div>
+                <div className="w-28">Open Day</div>
+                <div className="w-28">Close Day</div>
+                <div className="w-20">Duration</div>
+                <div className="w-24">P&L</div>
+                <div className="w-32">Exit Reason</div>
               </div>
-            ))}
+              {tradeHistory.map((trade, index) => (
+                <div key={trade.id} className="flex items-center border-b border-border last:border-b-0 py-2 px-2 text-text-main text-sm">
+                  <div className="w-16">{index + 1}</div>
+                  <div className="w-16">{trade.side}</div>
+                  <div className="w-16">{trade.size}</div>
+                  <div className="w-28">${trade.entryPrice.toFixed(2)}</div>
+                  <div className="w-28">${trade.exitPrice.toFixed(2)}</div>
+                  <div className="w-28">{formatDate(trade.openDate)}</div>
+                  <div className="w-28">{formatDate(trade.closeDate)}</div>
+                  <div className="w-20">{trade.duration !== null && trade.duration !== undefined ? trade.duration : '-'}</div>
+                  <div className={`w-24 font-semibold ${trade.finalPL > 0 ? 'text-green-500' : 'text-error'}`}>${trade.finalPL.toFixed(2)}</div>
+                  <div className="w-32">{trade.closeReason || 'Manual'}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
