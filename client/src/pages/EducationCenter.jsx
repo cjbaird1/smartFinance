@@ -387,7 +387,7 @@ const educationTopics = [
             </thead>
             <tbody>
               {featureDescriptions.map((feature) => (
-                <tr key={feature.name}>
+                <tr key={feature.name} id={toSlug(feature.name)}>
                   <td className="px-4 py-2 align-top font-medium border-b border-border text-text-main bg-bg-panel">{feature.name}</td>
                   <td className="px-4 py-2 align-top border-b border-border text-text-main bg-bg-panel">{feature.description}</td>
                 </tr>

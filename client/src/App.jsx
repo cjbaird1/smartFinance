@@ -9,6 +9,7 @@ import NewsPage from "./pages/NewsPage";
 import TradeSimulatorPage from "./pages/TradeSimulatorPage";
 import PredictionsPage from "./pages/PredictionsPage";
 import TailwindTest from "./components/TailwindTest";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
             <Route path="/strategy" element={<div>Strategy Tester Page</div>} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/education" element={<EducationCenter />} />
-            <Route path="/alerts" element={<div>Alerts Page</div>} />
+            <Route path="/alerts" element={<LandingPage />} />
             <Route path="/tailwind-test" element={<TailwindTest />} />
             <Route path="*" element={<Navigate to="/search" />} />
           </Routes>
