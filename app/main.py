@@ -31,7 +31,7 @@ app.register_blueprint(news_bp)
 @app.route("/api/stock", methods=["GET"])
 def get_stock_data():
     ticker = request.args.get("ticker")
-    n_bars = request.args.get("n_bars", default=5, type=int)  # 🔹 ADDED: Default to 5 if n_bars is not provided
+    n_bars = request.args.get("n_bars", default=5, type=int)  
     interval_str = request.args.get("interval", "1d")
     interval_enum = INTERVAL_MAP.get(interval_str)
 
@@ -41,7 +41,7 @@ def get_stock_data():
     
     # Cap the number of bars at 999 as per request
     if n_bars > 999:
-        n_bars = 999  # 🔹 ADDED: Limit to 999
+        n_bars = 999  
     
     if not interval_enum:
         return {"error": "Invalid interval provided."}, 400
@@ -56,7 +56,7 @@ def get_stock_data():
             symbol=ticker.upper(),
             exchange='NASDAQ',
             interval=interval_enum,
-            n_bars=n_bars  # 🔹 ADDED: Use n_bars value from frontend
+            n_bars=n_bars  
         )
 
         if data.empty or data is None:
@@ -128,6 +128,10 @@ def predict_stock_movement():
         
         # Train the model on historical data
         training_success = stock_predictor.train_model(data_records)
+        
+        # Evaluate and print metrics to backend, including ticker and interval
+        print(f"\n=== Model Evaluation for {ticker.upper()} ({interval_str}) ===")
+        stock_predictor.evaluate_model(data_records)
         
         if not training_success:
             return {

@@ -1,79 +1,11 @@
-# # ml/model.py
-
-# import tensorflow as tf
-# from tensorflow.keras import layers, Model
-# from transformers import TFBertModel, BertTokenizer
-# import numpy as np
-# from typing import List, Dict, Union
-# import os
-# from dotenv import load_dotenv
-
-# class FinancialSentimentModel(Model):
-#     def __init__(self, model_name: str = "bert-base-uncased"):
-#         super(FinancialSentimentModel, self).__init__()
-#         self.bert = TFBertModel.from_pretrained(model_name)
-#         self.dropout = layers.Dropout(0.1)
-#         self.classifier = layers.Dense(3, activation='softmax')  # 3 classes: negative, neutral, positive
-        
-#     def call(self, inputs):
-#         input_ids, attention_mask = inputs
-#         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-#         pooled_output = outputs[1]  # [CLS] token output
-#         pooled_output = self.dropout(pooled_output)
-#         logits = self.classifier(pooled_output)
-#         return logits
-
-# class SentimentAnalyzer:
-#     def __init__(self):
-#         self.model = FinancialSentimentModel()
-#         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-        
-#     def preprocess_text(self, text: str) -> Dict[str, tf.Tensor]:
-#         """Preprocess text for BERT model"""
-#         inputs = self.tokenizer(
-#             text,
-#             padding=True,
-#             truncation=True,
-#             max_length=512,
-#             return_tensors="tf"
-#         )
-#         return inputs
-    
-#     def analyze_sentiment(self, text: str) -> float:
-#         """Analyze sentiment of a single text"""
-#         inputs = self.preprocess_text(text)
-#         input_ids = tf.convert_to_tensor(inputs['input_ids'])
-#         attention_mask = tf.convert_to_tensor(inputs['attention_mask'])
-        
-#         # Get model predictions
-#         probabilities = self.model([input_ids, attention_mask])
-        
-#         # Convert to sentiment score (-1 to 1)
-#         # probabilities shape: [batch_size, 3] where 3 is [negative, neutral, positive]
-#         sentiment_score = float(probabilities[0][2] - probabilities[0][0])
-#         return sentiment_score
-    
-#     def analyze_batch(self, texts: List[str]) -> List[float]:
-#         """Analyze sentiment of multiple texts"""
-#         return [self.analyze_sentiment(text) for text in texts]
-    
-#     def get_sentiment_label(self, score: float) -> str:
-#         """Convert sentiment score to label"""
-#         if score > 0.3:
-#             return "Positive"
-#         elif score < -0.3:
-#             return "Negative"
-#         return "Neutral"
-
-# # Initialize the analyzer
-# sentiment_analyzer = SentimentAnalyzer()
-
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from typing import Dict, List, Tuple
+from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score, f1_score
+from collections import Counter
 
 class SentimentAnalyzer:
     def __init__(self):
@@ -325,6 +257,58 @@ class StockMovementPredictor:
             'rsi', 'macd', 'macd_signal', 'macd_histogram',
             'volume_ratio', 'bb_position'
         ]
+
+    def evaluate_model(self, data, test_size=0.2):
+        df, labels = self.create_labels(data)
+        feature_columns = self.get_feature_columns()
+        df_clean = df[feature_columns].dropna()
+        labels_clean = [labels[i] for i in df_clean.index if i < len(labels)]
+        if len(df_clean) < 30:
+            print('Not enough data to evaluate model.')
+            return None
+
+        # Split into train/test
+        split_idx = int(len(df_clean) * (1 - test_size))
+        X_train, X_test = df_clean.iloc[:split_idx], df_clean.iloc[split_idx:]
+        y_train, y_test = labels_clean[:split_idx], labels_clean[split_idx:]
+
+        # Scale features
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+
+        # Train model
+        self.model.fit(X_train_scaled, y_train)
+
+        # Predict
+        y_pred = self.model.predict(X_test_scaled)
+
+        # Print predictions vs actuals
+        print("\n=== PREDICTIONS vs ACTUALS (test set) ===")
+        for i in range(len(y_pred)):
+            print(f"Predicted: {y_pred[i]} | Actual: {y_test[i]}")
+        print(f"Total predictions: {len(y_pred)}")
+
+        # Print train and test label distribution
+        print("\nTrain label distribution:", Counter(y_train))
+        print("Test label distribution:", Counter(y_test))
+
+        # Metrics
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred, average='weighted', zero_division=0)
+        recall = recall_score(y_test, y_pred, average='weighted', zero_division=0)
+        f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+
+        print(f"\nModel Evaluation Metrics:")
+        print(f"  Accuracy:  {accuracy:.4f}")
+        print(f"  Precision: {precision:.4f}")
+        print(f"  Recall:    {recall:.4f}")
+        print(f"  F1 Score:  {f1:.4f}")
+        return {
+            'accuracy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1': f1
+        }
 
 # Initialize the analyzers
 sentiment_analyzer = SentimentAnalyzer()
