@@ -4,6 +4,77 @@ import { useLocation } from 'react-router-dom';
 
 const toSlug = (str) => str.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '');
 
+const featureDescriptions = [
+  {
+    name: 'Price Change',
+    description: 'Measures the percentage change in closing price from the previous period. This feature captures immediate price momentum and is fundamental for identifying short-term trends or reversals.'
+  },
+  {
+    name: 'Price Change (5d)',
+    description: 'Calculates the percentage change in closing price over the last 5 periods. It smooths out daily noise and helps the model recognize medium-term price direction. Useful for detecting sustained moves.'
+  },
+  {
+    name: 'Price Change (10d)',
+    description: 'Similar to the 5-day version, but over 10 periods. This feature highlights longer-term price trends and can help the model distinguish between short-lived fluctuations and more persistent moves.'
+  },
+  {
+    name: 'Open/Close Ratio',
+    description: 'The ratio between the opening and closing prices for a period. This feature can indicate intraday sentiment—whether buyers or sellers dominated the session.'
+  },
+  {
+    name: 'High/Low Ratio',
+    description: 'Compares the highest and lowest prices within a period. It\'s a measure of volatility and trading range, helping the model assess how much price fluctuated during the session.'
+  },
+  {
+    name: 'Volume',
+    description: 'The total number of shares traded in a period. Volume is a key indicator of market participation and can confirm the strength of price moves or signal potential reversals when diverging from price.'
+  },
+  {
+    name: 'SMA (5)',
+    description: 'The 5-period Simple Moving Average of closing prices. This short-term trend indicator helps the model identify recent price direction and smooths out minor fluctuations.'
+  },
+  {
+    name: 'SMA (10)',
+    description: 'The 10-period Simple Moving Average. It provides a slightly longer-term view of price trends, helping to filter out short-term noise and highlight emerging trends.'
+  },
+  {
+    name: 'SMA (20)',
+    description: 'The 20-period Simple Moving Average. Often used as a baseline for trend analysis, it helps the model recognize established trends and potential support/resistance levels.'
+  },
+  {
+    name: 'Price vs SMA(5)',
+    description: 'Compares the current price to its 5-period SMA. This feature indicates whether the price is above or below its recent average, signaling short-term bullishness or bearishness.'
+  },
+  {
+    name: 'Price vs SMA(10)',
+    description: 'Similar to the above, but with a 10-period SMA. It helps the model assess medium-term price positioning relative to trend.'
+  },
+  {
+    name: 'Price vs SMA(20)',
+    description: 'Compares price to the 20-period SMA, providing insight into longer-term trend alignment and potential overbought/oversold conditions.'
+  },
+  {
+    name: 'MACD',
+    description: 'The Moving Average Convergence Divergence indicator, which measures the difference between two EMAs (typically 12 and 26 periods). It\'s a popular momentum and trend-following tool, helping the model spot shifts in market direction.'
+  },
+  {
+    name: 'MACD Signal',
+    description: 'The 9-period EMA of the MACD line. Used to generate buy/sell signals when it crosses the MACD, this feature helps the model identify potential entry and exit points.'
+  },
+  {
+    name: 'MACD Histogram',
+    description: 'The difference between the MACD and its signal line. It visualizes the strength and direction of momentum, helping the model gauge the intensity of price moves.'
+  },
+  {
+    name: 'RSI (14)',
+    description: 'The 14-period Relative Strength Index, a momentum oscillator that measures the speed and change of price movements. It helps the model detect overbought or oversold conditions and potential reversal points.'
+  },
+  {
+    name: 'ATR (14)',
+    description: 'The 14-period Average True Range, a volatility indicator that measures the average range between high and low prices over 14 periods. It helps the model understand market volatility and adjust expectations for price movement.'
+  }
+];
+
 const educationTopics = [
   {
     title: "Why This Matters",
@@ -291,6 +362,41 @@ const educationTopics = [
         )
       }
     ]
+  },
+  {
+    title: "Understanding Features",
+    content: (
+      <div className="understanding-features-section">
+        <h3 className="text-xl font-semibold mb-4">Understanding Features</h3>
+        <p className="mb-2">
+          In machine learning, a <strong>feature</strong> is a measurable property or characteristic of the data that the model uses to make predictions. Features can be as simple as a stock's closing price, or as complex as a technical indicator derived from multiple data points. The quality and relevance of features are key to building effective predictive models.
+        </p>
+        <p className="mb-2">
+          A <strong>Feature Dictionary</strong> is a reference guide that explains each input variable (feature) used in a machine learning model. It helps users understand what data the model is using, why each feature matters, and how it's calculated. This transparency is crucial for both learning and trust in the model's predictions.
+        </p>
+        <p className="mb-4">
+          The following 17 features are the current default set used in our app's machine learning model for stock prediction. They were chosen to capture a broad range of price action, momentum, trend, and volatility signals. As our platform evolves, we may add or customize features to further improve model performance.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-border rounded-lg bg-bg-panel">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-left font-semibold bg-bg-main border-b border-border">Feature Name</th>
+                <th className="px-4 py-2 text-left font-semibold bg-bg-main border-b border-border">In-Depth Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {featureDescriptions.map((feature) => (
+                <tr key={feature.name}>
+                  <td className="px-4 py-2 align-top font-medium border-b border-border text-text-main bg-bg-panel">{feature.name}</td>
+                  <td className="px-4 py-2 align-top border-b border-border text-text-main bg-bg-panel">{feature.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
   },
   {
     title: "Finance & Analysis Education",
