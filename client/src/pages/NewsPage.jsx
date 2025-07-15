@@ -121,7 +121,7 @@ const NewsPage = () => {
     <div className="min-h-screen bg-bg-main text-text-main">
       <h2 className="mb-6 text-text-main text-2xl font-semibold">News & Sentiment Analysis</h2>
       {/* Search Section */}
-      <div className="flex flex-wrap gap-4 items-end bg-bg-panel p-4 rounded-xl shadow-shadow mb-8">
+      <div className="flex flex-wrap gap-4 items-start bg-bg-panel p-4 rounded-xl shadow-shadow mb-8">
         <ValidatedInput
           type="text"
           value={selectedTicker}
