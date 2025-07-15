@@ -9,14 +9,17 @@ import NewsPage from "./pages/NewsPage";
 import TradeSimulatorPage from "./pages/TradeSimulatorPage";
 import PredictionsPage from "./pages/PredictionsPage";
 import TailwindTest from "./components/TailwindTest";
-import "./styles/app.css";
 
 function App() {
   return (
     <Router>
-      <div className="app-layout">
+      <div
+        className="flex min-h-screen bg-bg-main text-text-main"
+      >
         <Sidebar />
-        <div className="main-content">
+        <div
+          className="flex-1 p-8 bg-bg-main min-w-0"
+        >
           <Routes>
             <Route path="/search" element={<SearchPage />} />
             <Route path="/charts" element={<div>Technical Charts Page</div>} />
