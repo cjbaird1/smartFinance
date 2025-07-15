@@ -29,7 +29,7 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
 
   return (
     <Modal onClose={onClose}>
-      <div className="max-w-[900px] max-h-[80vh] overflow-hidden flex flex-col">
+      <div className="max-w-[900px] min-w-[700px] md:min-w-[500px] sm:min-w-[320px] max-h-[80vh] min-h-[400px] overflow-hidden flex flex-col">
         <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
           <h2 className="m-0 text-text-main text-2xl font-semibold">Feature Dictionary</h2>
           <button 
@@ -86,12 +86,14 @@ const FeatureDictionaryModal = ({ isOpen, onClose, activeFeatures = [], allFeatu
           </div>
         </div>
 
-        {/* Features Table */}
-        <FeaturesTable
-          features={filteredFeatures}
-          activeTab={activeTab}
-          onLearnMore={handleLearnMore}
-        />
+        {/* Features Table - Scrollable Area */}
+        <div className="flex-1 overflow-auto min-h-[200px] overflow-x-auto">
+          <FeaturesTable
+            features={filteredFeatures}
+            activeTab={activeTab}
+            onLearnMore={handleLearnMore}
+          />
+        </div>
 
         {/* Footer */}
         <div className="flex justify-between items-center mt-5 pt-4 border-t border-border">
