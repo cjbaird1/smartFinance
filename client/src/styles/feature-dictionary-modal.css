@@ -93,10 +93,11 @@
 /* Features Table Container */
 .features-table-container {
   flex: 1;
-  overflow: auto;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   background: var(--bg-main);
+  max-height: 400px;
+  min-height: 200px;
 }
 
 .features-table {

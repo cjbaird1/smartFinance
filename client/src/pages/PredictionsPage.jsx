@@ -321,15 +321,13 @@ const PredictionsPage = () => {
                 
                 {/* View Features Button */}
                 <div className="features-section">
-                  <Tooltip content="See the data and indicators used for this prediction">
-                    <Button
-                      variant="search"
-                      onClick={openFeatureModal}
-                      className="view-features-btn"
-                    >
-                      View Features Used in Prediction
-                    </Button>
-                  </Tooltip>
+                  <Button
+                    variant="search"
+                    onClick={openFeatureModal}
+                    className="view-features-btn"
+                  >
+                    View Features Used in Prediction
+                  </Button>
                 </div>
               </div>
               
