@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdAlternateEmail } from "react-icons/md";
 import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ValidatedInput from '../components/ValidatedInput';
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
@@ -12,18 +13,51 @@ const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // TODO: Redirect to dashboard or home page after successful sign-in
+      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      if (!user.emailVerified) {
+        await signOut(auth);
+        setError("Please verify your email address before signing in. Check your inbox for a verification email.");
+        setLoading(false);
+        return;
+      }
+      window.location.href = "/search";
     } catch (err) {
-      setError(err.message);
+      let msg = err.message;
+      if (err.code === "auth/user-not-found") msg = "No account found with this email.";
+      else if (err.code === "auth/wrong-password") msg = "Incorrect password.";
+      else if (err.code === "auth/too-many-requests") msg = "Too many failed attempts. Please try again later.";
+      else if (err.code === "auth/invalid-email") msg = "Invalid email address format.";
+      setError(msg);
     }
     setLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError("");
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      window.location.href = "/search";
+    } catch (err) {
+      let msg = err.message;
+      if (err.code === "auth/popup-closed-by-user") msg = "Google sign-in popup was closed.";
+      else if (err.code === "auth/cancelled-popup-request") msg = "Cancelled previous Google sign-in attempt.";
+      setError(msg);
+    }
+    setGoogleLoading(false);
   };
 
   return (
@@ -37,10 +71,15 @@ const SignInPage = () => {
         <div className="mb-4 text-gray-300 text-center w-full">
           First time here? <Link to="/sign-up" className="text-blue-400 hover:underline">Sign up for free</Link>
         </div>
-        {/* Google Sign In Button (disabled for now) */}
-        <button className="w-full flex items-center justify-center gap-2 bg-black text-white rounded-full py-3 mb-4 border border-gray-700 hover:bg-gray-900 transition opacity-50 cursor-not-allowed" disabled>
+        {/* Google Sign In Button */}
+        <button
+          className="w-full flex items-center justify-center gap-2 bg-black text-white rounded-full py-3 mb-4 border border-gray-700 hover:bg-gray-900 transition"
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading || loading}
+        >
           <FcGoogle className="w-5 h-5" />
-          <span>Sign in with Google</span>
+          <span>{googleLoading ? "Signing in..." : "Sign in with Google"}</span>
         </button>
         {/* Divider */}
         <div className="flex items-center w-full my-4">
@@ -94,8 +133,18 @@ const SignInPage = () => {
               </button>
             </div>
           </div>
+          <div className="flex items-center mb-4">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={e => setRememberMe(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="rememberMe" className="text-gray-300 text-sm select-none">Remember me</label>
+          </div>
           <div className="w-full mb-6 text-right">
-            <a href="#" className="text-blue-400 hover:underline text-sm">Forgot your password?</a>
+            <button type="button" className="text-blue-400 hover:underline text-sm bg-transparent border-none p-0" onClick={() => navigate("/reset-password")}>Forgot your password?</button>
           </div>
           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
           <button
