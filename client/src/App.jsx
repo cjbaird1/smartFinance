@@ -11,6 +11,7 @@ import PredictionsPage from "./pages/PredictionsPage";
 import TailwindTest from "./components/TailwindTest";
 import LandingPage from "./pages/LandingPage";
 import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/alerts" element={<LandingPage />} />
             <Route path="/tailwind-test" element={<TailwindTest />} />
             <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="*" element={<Navigate to="/search" />} />
           </Routes>
         </div>
