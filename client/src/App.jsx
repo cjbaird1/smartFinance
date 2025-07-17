@@ -10,6 +10,7 @@ import TradeSimulatorPage from "./pages/TradeSimulatorPage";
 import PredictionsPage from "./pages/PredictionsPage";
 import TailwindTest from "./components/TailwindTest";
 import LandingPage from "./pages/LandingPage";
+import SignInPage from "./pages/SignInPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/education" element={<EducationCenter />} />
             <Route path="/alerts" element={<LandingPage />} />
             <Route path="/tailwind-test" element={<TailwindTest />} />
+            <Route path="/sign-in" element={<SignInPage />} />
             <Route path="*" element={<Navigate to="/search" />} />
           </Routes>
         </div>
