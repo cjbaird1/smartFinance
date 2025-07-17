@@ -1,6 +1,9 @@
 import React from "react";
+import PricingSection from "../components/PricingSection";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
@@ -14,13 +17,24 @@ const LandingPage = () => {
         {/* Navigation Links */}
         <div className="flex items-center space-x-8">
           <a href="#features" className="hover:text-blue-400 transition">Features</a>
-          <a href="#pricing" className="hover:text-blue-400 transition">Pricing</a>
+          <button
+            className="hover:text-blue-400 transition bg-transparent border-none outline-none cursor-pointer"
+            style={{ padding: 0 }}
+            onClick={() => {
+              const section = document.getElementById("pricing");
+              if (section) {
+                section.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+          >
+            Pricing
+          </button>
           <a href="#resources" className="hover:text-blue-400 transition">Resources</a>
         </div>
         {/* Right Side: Auth Buttons */}
         <div className="flex items-center space-x-4">
           {/* Auth Buttons */}
-          <button className="px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 transition">Sign in</button>
+          <button className="px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 transition" onClick={() => navigate("/sign-in")}>Sign in</button>
           <button className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 transition font-semibold">Try Now</button>
         </div>
       </nav>
@@ -72,6 +86,9 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Floating Help Button */}
       <button
