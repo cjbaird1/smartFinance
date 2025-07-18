@@ -5,9 +5,12 @@ import '../styles/sidebar.css'; // We'll create this CSS file for styling
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      <div className="sidebar-title">
+      <NavLink 
+        to="/dashboard" 
+        className={({ isActive }) => `sidebar-title sidebar-link ${isActive ? 'active' : ''}`}
+      >
         <span role="img" aria-label="dashboard">📊</span> Dashboard
-      </div>
+      </NavLink>
       <NavLink 
         to="/search" 
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
@@ -57,7 +60,7 @@ const Sidebar = () => {
       
       <div className="sidebar-bottom">
         <NavLink 
-          to="/charts" 
+          to="/settings" 
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
           style={{ marginTop: 'auto' }}
         >
