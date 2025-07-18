@@ -32,7 +32,7 @@ const SignInPage = () => {
         setLoading(false);
         return;
       }
-      window.location.href = "/search";
+      window.location.href = "/dashboard";
     } catch (err) {
       let msg = err.message;
       if (err.code === "auth/user-not-found") msg = "No account found with this email.";
@@ -50,7 +50,7 @@ const SignInPage = () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      window.location.href = "/search";
+      window.location.href = "/dashboard";
     } catch (err) {
       let msg = err.message;
       if (err.code === "auth/popup-closed-by-user") msg = "Google sign-in popup was closed.";
