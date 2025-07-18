@@ -1,19 +1,18 @@
 import React from "react";
 import PricingSection from "../components/PricingSection";
 import { useNavigate } from "react-router-dom";
+import logo from '../assets/logo.svg';
 
 const LandingPage = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
-      <nav className="w-full flex items-center justify-between px-8 py-4 border-b border-gray-800 bg-black">
+      <nav className="w-full flex items-center justify-between px-8 py-2 border-b border-gray-800 bg-black">
         {/* Logo Placeholder */}
-        <div className="flex items-center">
-          <div className="w-32 h-8 bg-gray-700 rounded flex items-center justify-center font-bold text-lg tracking-widest">
-            LOGO
-          </div>
-        </div>
+        <a href="/" className="flex items-center -ml-4 mt-0" style={{ height: '100px' }}>
+          <img src={logo} alt="InsightReplay Logo" style={{ height: '100px', width: 'auto', maxWidth: '100%' }} />
+        </a>
         {/* Navigation Links */}
         <div className="flex items-center space-x-8">
           <a href="#features" className="hover:text-blue-400 transition">Features</a>
